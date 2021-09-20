@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>Delete Invoice {{data.id}}</h1>
+<div mat-dialog-content>
+  <p>Available positions can be selected again.</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="false">Back</button>
+  <button mat-button [mat-dialog-close]="true" color="warn" cdkFocusInitial>Delete</button>
+</div>

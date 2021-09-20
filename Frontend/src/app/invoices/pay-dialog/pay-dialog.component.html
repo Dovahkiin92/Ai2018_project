@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Pay invoice {{data.id}}</h1>
+<div mat-dialog-content>
+  <mat-list>
+    <mat-list-item *ngFor="let item of data.items"> {{ item }}</mat-list-item>
+  </mat-list>
+  <p>Confirm purchase</p>
+  <p>Total amount is  {{data.amount}} Token</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="false">No</button>
+  <button mat-button [mat-dialog-close]="data.id" cdkFocusInitial>Buy</button>
+</div>

@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>Archive {{data.id}}</h1>
+<div mat-dialog-content>
+  <h4>Archive Details</h4>
+  <div >
+    <mat-list  *ngFor="let position of data.positions"   >
+      <mat-list-item> Lat: {{position.latitude}} - Lng: {{ position.longitude}}  Time {{ position.timestamp*1000 | date: 'dd-MM-yyyy' }}</mat-list-item>
+    </mat-list>
+  </div>
+
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="false">Close</button>
+  <button mat-button [mat-dialog-close]="data" color="accent">Remove</button>
+</div>

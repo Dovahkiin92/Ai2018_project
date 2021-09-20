@@ -1,0 +1,21 @@
+<div>
+  <div class="row">
+
+    <div class="col-md-8 offset-md-2 account-wrapper">
+      <mat-card *ngIf="account">
+        <mat-card-title>My Profile</mat-card-title>
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item><strong>Name: </strong> {{account.username}}</mat-list-item>
+            <mat-list-item>
+              <strong>Wallet: </strong> {{account.wallet}}  <strong>€ </strong>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <div *ngIf="account">
+  <app-archives   [accountId]="account.id"></app-archives>
+  </div>
+</div>

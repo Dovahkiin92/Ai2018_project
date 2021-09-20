@@ -1,0 +1,19 @@
+<h1 mat-dialog-title>Invoice </h1>
+<div mat-dialog-content>
+  <h4>Details</h4>
+  <mat-list>
+    <mat-list-item><strong>Id:</strong> {{data.id}}</mat-list-item>
+    <mat-list-item><strong>Price:</strong> {{data.amount}}</mat-list-item>
+    <mat-list-item><strong>Date invoice:  </strong> {{ data.createdAt*1000 | date: 'dd-MM-yyyy' }}</mat-list-item>
+    <mat-list-item><strong>Status:</strong> {{data.paid ? "Paid":"Not Paid"}}</mat-list-item>
+  </mat-list>
+  <h4>Archives</h4>
+  <mat-list *ngFor="let item of data.items">
+    <mat-list-item> ArchiveID - {{item}} </mat-list-item>
+  </mat-list>
+
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="false">Close</button>
+  <button mat-button *ngIf="!data.paid" color="primary" [mat-dialog-close]="data.id">Buy</button>
+</div>

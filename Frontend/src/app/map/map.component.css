@@ -1,0 +1,20 @@
+.mapContainer {
+  display:block;
+  width: 100%;
+  min-height: 400px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.outer-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-top: 2%;
+}
+.inner-container{
+  flex-direction: column;
+  justify-content: space-around;
+}
+

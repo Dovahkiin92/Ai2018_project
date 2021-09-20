@@ -1,0 +1,19 @@
+.outer-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.mat-selection-list{
+
+}
+.inner-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.dialog{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 40px;
+}
