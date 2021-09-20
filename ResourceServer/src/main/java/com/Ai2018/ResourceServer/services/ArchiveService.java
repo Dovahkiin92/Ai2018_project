@@ -28,7 +28,7 @@ public class ArchiveService {
     private StoreService storeService;
 
     @Transactional
-    public Archive createArchive(String userId, ArrayList<Position> positions) throws Exception {
+    public Archive createArchive(String userId, ArrayList<Position> positions) {
       //  positionRepository.checkPositions(positions); // Will throw if any position is not valid.
         Archive a = new Archive();
         a.setUserId(userId);
@@ -108,10 +108,10 @@ public class ArchiveService {
                                 return newpos;
                             }).collect(Collectors.toSet()));
 
-            approx.setApproxTimestamp( a.getPositions().stream()
+            approx.setApproxTimestamps( a.getPositions().stream()
                     .map(p -> {
                         ApproximatedTimePosition ap = new ApproximatedTimePosition();
-                        ap.setTimestamp(Math.round(p.getTimestamp()*1.0/6000));
+                        ap.setTimestamp(Math.round(p.getTimestamp()*1.0/60));
                         ap.setUserId(p.getUserId());
 
                         return ap;

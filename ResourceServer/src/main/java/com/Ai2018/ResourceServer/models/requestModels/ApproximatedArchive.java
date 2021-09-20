@@ -1,15 +1,11 @@
 package com.Ai2018.ResourceServer.models.requestModels;
 
-import com.Ai2018.ResourceServer.models.Archive;
-import com.Ai2018.ResourceServer.models.Position;
-
-import java.util.List;
 import java.util.Set;
 
 public class ApproximatedArchive {
     private String id;
     private Set<ApproximatedPosition> approxPositions;
-    private Set<ApproximatedTimePosition> approxTimestamp;
+    private Set<ApproximatedTimePosition> approxTimestamps;
     private String userId;
     private double price;
     public String getId() {
@@ -28,12 +24,12 @@ public class ApproximatedArchive {
         this.approxPositions = approxPositions;
     }
 
-    public Set<ApproximatedTimePosition> getApproxTimestamp() {
-        return approxTimestamp;
+    public Set<ApproximatedTimePosition> getApproxTimestamps() {
+        return approxTimestamps;
     }
 
-    public void setApproxTimestamp(Set<ApproximatedTimePosition> approxTimestamp) {
-        this.approxTimestamp = approxTimestamp;
+    public void setApproxTimestamps(Set<ApproximatedTimePosition> approxTimestamps) {
+        this.approxTimestamps = approxTimestamps;
     }
 
     public String getUserId() {
