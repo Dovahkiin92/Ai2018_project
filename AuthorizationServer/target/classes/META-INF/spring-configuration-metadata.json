@@ -1,0 +1,36 @@
+{
+  "groups": [],
+  "properties": [
+    {
+      "name": "security.oauth2.client.access_token-validity_seconds",
+      "type": "java.lang.Long",
+      "description": "Validity time for access token in seconds."
+    },
+    {
+      "name": "security.oauth2.client.client-id",
+      "type": "java.lang.String",
+      "description": "Oauth2 client id."
+    },
+    {
+      "name": "security.oauth2.client.client-secret",
+      "type": "java.lang.String",
+      "description": "Oauth2 client secret, to be encrypted."
+    },
+    {
+      "name": "security.oauth2.client.refresh_token-validity_seconds",
+      "type": "java.lang.Long",
+      "description": "Validity time for refresh token in seconds."
+    },
+    {
+      "name": "security.oauth2.client.secret_key",
+      "type": "java.lang.String",
+      "description": "Symmetric key for encryption."
+    },
+    {
+      "name": "security.oauth2.resource.id",
+      "type": "java.lang.String",
+      "description": "Resource id."
+    }
+  ],
+  "hints": []
+}
