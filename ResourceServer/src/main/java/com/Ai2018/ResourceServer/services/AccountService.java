@@ -1,6 +1,7 @@
 package com.Ai2018.ResourceServer.services;
 
 import com.Ai2018.ResourceServer.models.Account;
+import com.Ai2018.ResourceServer.models.requestModels.AccountRegistration;
 import com.Ai2018.ResourceServer.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,10 +27,14 @@ public class AccountService implements UserDetailsService {
        }
        return account;
     }
-    public Account register(Account account) throws Exception{
-        Account existingAccount = accountRepository.findAccountByUsername(account.getUsername());
+    public Account register(AccountRegistration ar) throws Exception{
+        Account existingAccount = accountRepository.findAccountByUsername(ar.getUsername());
         if (existingAccount == null) {
-            account.setPassword(passwordEncoder.encode(account.getPassword()));
+            Account account = new Account();
+            account.setUsername(ar.getUsername());
+            account.setPassword(passwordEncoder.encode(ar.getPassword()));
+            account.setWallet(10.0);
+            account.grantAuthority("ROLE_USER");
             return accountRepository.save(account);
         } else {
             throw new Exception("Username already taken");

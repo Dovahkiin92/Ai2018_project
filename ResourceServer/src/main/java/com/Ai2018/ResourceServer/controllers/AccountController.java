@@ -1,14 +1,14 @@
 package com.Ai2018.ResourceServer.controllers;
 
 import com.Ai2018.ResourceServer.models.Account;
+import com.Ai2018.ResourceServer.models.requestModels.AccountRegistration;
 import com.Ai2018.ResourceServer.services.AccountService;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,12 +29,10 @@ public class AccountController {
             return new ResponseEntity<Object>(new Error(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
-
     @PostMapping(path = "/register", produces = "application/json")
-    public ResponseEntity<?> register(@RequestBody Account account) {
+    public ResponseEntity<?> register(@RequestBody AccountRegistration ar) {
         try {
-            account.grantAuthority("ROLE_USER");
-            return new ResponseEntity<Object>(accountService.register(account), HttpStatus.OK);
+            return new ResponseEntity<Object>(accountService.register(ar), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<Object>(new Error(e.getMessage()),HttpStatus.BAD_REQUEST );

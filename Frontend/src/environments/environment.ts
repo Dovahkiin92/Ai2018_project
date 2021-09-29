@@ -2,14 +2,14 @@
 // `ng build ---prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 // const RESOURCE_SERVER_HOST = '192.168.99.103';
-const RESOURCE_SERVER_HOST = 'localhost';
+ const RESOURCE_SERVER_HOST = 'localhost';
 const RESOURCE_SERVER_PORT = '8081';
 export const environment = {
   production: false,
   client_credentials: 'trusted-app:secret',
-  api_url: 'http://localhost:8080/',
+  api_url: 'http://localhost:8081',
   trusted_url: 'http://trusted-app:secret@localhost:8080/oauth/token',
-  register_url: 'http://register-app:secret@localhost:8080/oauth/token',
+  register_url: 'http://register-app:secret@localhost:9000/oauth/token',
   refresh_url: 'http://register-app:secret@localhost:8080/oauth/token',
   GET_ACCOUNT_URL: 'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/account',
   map_position_url: 'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/positions/within',
@@ -19,7 +19,7 @@ export const environment = {
   store_invoices_url: 'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/store/invoices',
   store_invoice_cancel_url: 'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/store/invoices/{id}',
   position_delete_url: 'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/positions/delete',
-
+  username_url:  'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/account/name',
   // GET_ACCOUNT_URL: ' ../../assets/account.json',
   user_topup_url: 'http://localhost:8080/topup',
   user_changepw_url: 'http://localhost:8080/change-password',

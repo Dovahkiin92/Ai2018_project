@@ -111,7 +111,7 @@ public class ArchiveService {
             approx.setApproxTimestamps( a.getPositions().stream()
                     .map(p -> {
                         ApproximatedTimePosition ap = new ApproximatedTimePosition();
-                        ap.setTimestamp(Math.round(p.getTimestamp()*1.0/60));
+                        ap.setTimestamp(p.getTimestamp() - p.getTimestamp()%60);
                         ap.setUserId(p.getUserId());
 
                         return ap;

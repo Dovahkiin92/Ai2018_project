@@ -29,6 +29,7 @@ public class OAuth2ResourceServerConfigJwt extends ResourceServerConfigurerAdapt
     public void configure(final HttpSecurity http) throws Exception {
         // @formatter:off
                 http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                        .and().authorizeRequests().antMatchers("/register").hasAuthority("ROLE_REGISTER")
                         .and().authorizeRequests().antMatchers("/account").hasAuthority("USER")
                         .and().authorizeRequests().antMatchers("/archives/**").hasAuthority("USER")
                         .and().authorizeRequests().antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
@@ -41,6 +42,7 @@ public class OAuth2ResourceServerConfigJwt extends ResourceServerConfigurerAdapt
     @Override
     public void configure(final ResourceServerSecurityConfigurer config) {
         config.tokenServices(tokenServices());
+        config.resourceId("resourceId");
     }
 
     @Bean

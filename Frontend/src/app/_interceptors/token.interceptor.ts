@@ -18,6 +18,16 @@ export class TokenInterceptor implements HttpInterceptor {
         });
         console.log('ADDED' + curToken); /// DEBUG
       }
+     console.log('sending request' + request);
+     const register = this.auth.getRegistrationToken();
+    if (register) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: 'Bearer ' + register
+        }
+      });
+      console.log('ADDED' + register); /// DEBUG
+    }
      return next.handle(request);
   }
 }

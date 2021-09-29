@@ -1,16 +1,19 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
+import {FormControl, FormGroup} from '@angular/forms';
+import {Subscription} from "rxjs";
+import {PositionService} from "../_services/position.service";
 import {
   ChartComponent,
   ApexAxisChartSeries,
   ApexChart,
+  ApexAnnotations,
   ApexFill,
   ApexXAxis,
   ApexDataLabels,
   ApexYAxis,
-  ApexTitleSubtitle
+  ApexTitleSubtitle, ApexTooltip
 } from "ng-apexcharts";
-import {Subscription} from "rxjs";
-import {PositionService} from "../_services/position.service";
+
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -18,6 +21,7 @@ export type ChartOptions = {
   yaxis: ApexYAxis;
   title: ApexTitleSubtitle;
   fill: ApexFill;
+  tooltip: ApexTooltip;
   dataLabels: ApexDataLabels;
 };
 
@@ -28,19 +32,44 @@ export type ChartOptions = {
 })
 export class TimechartComponent implements OnInit {
   @ViewChild("chart") chart: ChartComponent;
+  range = new FormGroup({
+    start: new FormControl(),
+    end: new FormControl()
+  });
+  time = new FormGroup({
+    start: new FormControl(),
+    end: new FormControl()
+  });
   public chartOptions: Partial<ChartOptions>;
+  startTime ="00:00";
+  endTime ="23:59";
   total = 0;
   subscription: Subscription;
   times = [];
-  constructor(private positionService: PositionService) {  this.chartOptions = {
+  constructor(private positionService: PositionService) {
+    this.chartOptions = {
     series: [],
     chart: {
       height: 350,
-      type: "bubble"
+      type: "bubble",
+      toolbar: {
+        show: true,
+        tools: {
+          download: false,
+          selection: false,
+          zoom: false,
+          zoomin: true,
+          zoomout: true,
+          pan: false
+        }
+      }
     },
     dataLabels: {
       enabled: false
     },
+      tooltip: {
+      enabled: false
+      },
     fill: {
       opacity: 0.8
     },
@@ -49,28 +78,34 @@ export class TimechartComponent implements OnInit {
     },
     xaxis: {
       tickAmount: 20,
-      type: "category"
+      type: "datetime"
     },
     yaxis: {
       tickAmount: 2,
-      max: 1
+      max: 1,
+      labels: {
+        show: false
+      }
     }
-  };
+    }
   }
+
   ngOnInit(): void {
-    this.subscription = this.positionService.currentTimeSubject.subscribe(positions => this.addValues(positions));
-  }
+  this.subscription = this.positionService.currentTimeSubject.subscribe(positions => this.addValues(positions));
+}
   public addValues(positions):void {
     this.total = 0;
+    this.chartOptions.series = [];
+    this.resetValues();
     positions.forEach(p =>{
       this.total = this.total + 1;
       const ts = p.timestamp;
       const uid:string = p.userId;
-      console.log("got time" + ts +" from uid_ "+uid);
+      console.log("got time" + new Date(ts*1000) +" from uid_ "+uid);
       if(! this.times[uid]){
         this.times[uid] = [];
       }
-      this.times[uid].push([ts,0.5,10]);
+      this.times[uid].push([new Date(ts*1000),0.5, 10]);
      // this.chartOptions.series.push({name: uid, data: [ts,2, 40] });
     });
     Object.keys(this.times).forEach(uid => {
@@ -78,21 +113,33 @@ export class TimechartComponent implements OnInit {
     });
     console.log(this.chartOptions);
   }
-  public generateData(baseval, count, yrange) {
-    var i = 0;
-    var series = [];
-    while (i < count) {
-      var x = Math.floor(Math.random() * (750 - 1 + 1)) + 1;
-      var y =
-        Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min;
-      var z = Math.floor(Math.random() * (75 - 15 + 1)) + 15;
-
-      series.push([x, y, z]);
-      baseval += 86400000;
-      i++;
-    }
-    return series;
+  public resetValues(): void{
+    Object.keys(this.times).forEach(uid => {
+    this.times[uid] = [];
+    });
   }
+  onTimeChange():void{
+    let start = 0;
+    let end = 0;
+    if (this.range.get('start').value !== null && this.range.get('end').value !== null ) {
+        start =  this.range.get('start').value.getTime(); // get selected date
+        start = start + this.toTimestamp(this.startTime); // add selected time
+        end =  this.range.get('end').value.getTime();
+        end = end + this.toTimestamp(this.endTime);
+      this.positionService.changeDateRange(start, end);
+    }
+    }
+    toTimestamp(val): number{
+      let a = val.split(':');
+      //convert in milliseconds
+      return (a[0]*60*60 + a[1]*60)*1000;
+    }
+  selectDateRange(): void{
+    if (this.range.get('start').value !== null && this.range.get('end').value !== null ){
+      this.positionService.changeDateRange(this.range.get('start').value.getTime(), this.range.get('end').value.getTime());
+    }
+  }
+
 }
 
 

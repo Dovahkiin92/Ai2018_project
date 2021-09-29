@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import * as L from 'leaflet';
 import {PositionService} from '../_services/position.service';
-import {FormControl, FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 import {LeafletDrawModule} from '@asymmetrik/ngx-leaflet-draw';
@@ -15,7 +14,6 @@ import {ArchiveService} from "../_services/archive.service";
   providers: [LeafletModule, LeafletDrawModule]
 })
 export class MapComponent implements OnInit, OnDestroy {
-  date = null;
   subscription: Subscription;
   showControlLayer = true;
   position = {lat : 45.05, lng : 7.6666667};
@@ -25,13 +23,12 @@ export class MapComponent implements OnInit, OnDestroy {
   private selectedMarkers = [];
   private selectedArchives = [];
   purchaseArea = L.layerGroup();
-  range = new FormGroup({
-    start: new FormControl(),
-    end: new FormControl()
-  });
+
   /****** MAP VARS ******/
+
   map: L.Map;
   archiveLayers ={} ;
+  archiveColors ={} ;
   topRight: Position = new Position();
   bottomLeft: Position = new Position();
   drawnItems = L.featureGroup();
@@ -103,8 +100,15 @@ export class MapComponent implements OnInit, OnDestroy {
       this.disableAddButton = true;
       this.showControlLayer = true;
       this.positionService.addSelectedMarker(null);
+      this.archiveService.addSelectedArchives(null);
+
       // this.drawControl.addTo(this.map);
     }));
+    this.map.on('moveend', e =>{
+      console.log('Event'+ e);
+      const corners = this.getMapBounds();
+      this.positionService.getMarkers(corners[0], corners[1]);
+    });
    /* this.map.on(L.Draw.Event.DELETESTOP, (e => {
         alert(e.layer);
         this.selectedMarkers = [];
@@ -115,14 +119,21 @@ export class MapComponent implements OnInit, OnDestroy {
   /* add markers received by service */
   addMarkers( positions: any): void{
     this.deletePositions();
-    positions.forEach(el => {const marker = L.marker([el.latitude, el.longitude]);
-
-                             marker.bindPopup(this.popupBody(el));
+    positions.forEach(el => {
+      const marker = L.circleMarker([el.latitude, el.longitude]);
+      marker.bindPopup(this.popupBody(el));
                              if( !this.archiveLayers[el.archiveId] ){
                                this.archiveLayers[el.archiveId] = new L.LayerGroup();
+                               this.archiveColors[el.userId] = this.randomColor();
+                              // L.CircleMarker.mergeOptions({color: '#134111'});
+                               marker.setStyle({fillColor: this.archiveColors[el.userId]});
+                               marker.setStyle({color: this.archiveColors[el.userId]});
+                               console.log('Changing color!');
                                marker.addTo(this.archiveLayers[el.archiveId]);
                              } else{
                             // marker.addTo(this.map)
+                               marker.setStyle({color: this.archiveColors[el.userId]});
+                               marker.setStyle({fillColor: this.archiveColors[el.userId]});
                                marker.addTo(this.archiveLayers[el.archiveId]);}
     });
     for( const list in this.archiveLayers) {
@@ -137,15 +148,23 @@ export class MapComponent implements OnInit, OnDestroy {
       `<div>Longitude: ${ position.longitude }</div> `+
       `<div>Owner: ${ position.userId }</div> `;
   }
+  randomColor(){
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
   /* Get positions inside selected area */
   getArchivesInPolygon(l): void{
     const poly = l.getLatLngs();
-    console.log('here');
+    this.archiveService.addSelectedArchives(null);
     Object.keys(this.archiveLayers).forEach((key) => {
       console.log(key);
       this.archiveLayers[key].eachLayer(layer => {
         console.log('layer - ' + layer);
-      if (layer instanceof L.Marker && layer.getPopup() != null && this.isMarkerInsidePolygon(layer, poly[0])) {
+      if (layer instanceof L.CircleMarker && layer.getPopup() != null && this.isMarkerInsidePolygon(layer, poly[0])) {
         this.selectedMarkers.push(layer.getLatLng());
         if(! this.selectedArchives.includes(key)) {
           this.selectedArchives.push(key);
@@ -196,6 +215,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.getArchivesInPolygon(poly);
     this.disableFinishButton = true;
   }
+
   isMarkerInsidePolygon(marker, polyPoints): boolean {
     const x = marker.getLatLng().lat;
     const y = marker.getLatLng().lng;
@@ -205,7 +225,6 @@ export class MapComponent implements OnInit, OnDestroy {
       const yi = polyPoints[i].lng;
       const xj = polyPoints[j].lat;
       const yj = polyPoints[j].lng;
-
       const intersect = ((yi > y) !== (yj > y))
         && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
       if (intersect) {
@@ -215,6 +234,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }
     return inside;
   }
+
   getMapBounds(): Position[]{
     this.bottomLeft.latitude = this.map.getBounds().getSouthWest().lat;
     this.bottomLeft.longitude = this.map.getBounds().getSouthWest().lng;
@@ -222,11 +242,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.topRight.longitude = this.map.getBounds().getNorthEast().lng;
     return [this.topRight, this.bottomLeft];
   }
-  selectDateRange(): void{
-    if (this.range.get('start').value !== null && this.range.get('end').value !== null ){
-      this.positionService.getMarkers(this.topRight, this.bottomLeft, this.range.get('start').value, this.range.get('end').value);
-    }
-  }
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
     this.positionService.addSelectedMarker(null); // clear selection

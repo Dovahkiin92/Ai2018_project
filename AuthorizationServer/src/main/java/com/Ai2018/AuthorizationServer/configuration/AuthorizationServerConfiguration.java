@@ -23,6 +23,8 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @EnableAuthorizationServer
 @PropertySource(ignoreResourceNotFound = true, value = "application.properties")
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
+    @Value("${security.oauth2.resource.id}")
+    String RESOURCE_ID;
     @Value("${security.oauth2.client.client-id}")
     String CLIENT_ID;
     @Value("${security.oauth2.client.client-secret}")
@@ -55,14 +57,23 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
+        clients
+              .inMemory()
                 .withClient(CLIENT_ID)
                 .secret(passwordEncoder.encode(CLIENT_SECRET))
                 .redirectUris("http://localhost:4200") //redirect on client to pass code
-                .authorizedGrantTypes("authorization_code","password", "client_credentials", "refresh_token")
+                .authorizedGrantTypes("authorization_code", "refresh_token")
                 .scopes("all")
                 .accessTokenValiditySeconds(ACCESS_TOKEN_VALIDITY_SECONDS)
-                .refreshTokenValiditySeconds(REFRESH_TOKEN_VALIDITY_SECONDS);
+                .refreshTokenValiditySeconds(REFRESH_TOKEN_VALIDITY_SECONDS)
+              .and()
+                .withClient("register-app")
+                .secret(passwordEncoder.encode(CLIENT_SECRET))
+                .authorizedGrantTypes("client_credentials")
+                .authorities("ROLE_REGISTER")
+                .scopes("read")
+                .resourceIds(RESOURCE_ID)
+                ;
     }
 
     @Override

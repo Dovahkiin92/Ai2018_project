@@ -14,7 +14,7 @@ export class ArchiveService {
   boughtArchives = [];
   constructor(private http: HttpClient) {
   }
-  addSelectedArchives(ids: any[]): void {
+   addSelectedArchives(ids: any[]): void {
     this.selectedArchives = [];
     if ( ids ){
       ids.forEach(id => {

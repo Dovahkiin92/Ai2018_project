@@ -44,6 +44,7 @@ import { ArchiveDetailsDialogComponent } from './archives/archive-details-dialog
 import { ArchivesComponent } from './archives/archives.component';
 import { TimechartComponent } from './timechart/timechart.component';
 import { NgApexchartsModule } from "ng-apexcharts";
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import { NgApexchartsModule } from "ng-apexcharts";
     ArchiveCancelDialogComponent,
     ArchiveDetailsDialogComponent,
     ArchivesComponent,
-    TimechartComponent
+    TimechartComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,

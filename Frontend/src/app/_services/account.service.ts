@@ -12,4 +12,11 @@ export class AccountService {
   account(): Observable<any>{
     return this.http.get(environment.GET_ACCOUNT_URL);
   }
+  registerAccount(username, password){
+    const account = new Account();
+    account.username = username;
+    account.password = password;
+    this.auth.register(account);
+
+  }
 }
