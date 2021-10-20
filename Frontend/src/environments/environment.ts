@@ -1,16 +1,20 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build ---prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
-// const RESOURCE_SERVER_HOST = '192.168.99.103';
+ // const RESOURCE_SERVER_HOST = '192.168.99.103';
  const RESOURCE_SERVER_HOST = 'localhost';
 const RESOURCE_SERVER_PORT = '8081';
+const AUTHORIZATION_SERVER_HOST = '192.168.99.103';
+const AUTHORIZATION_SERVER_PORT = '9000';
 export const environment = {
   production: false,
   client_credentials: 'trusted-app:secret',
-  api_url: 'http://localhost:8081',
+  register_url: 'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/register',
   trusted_url: 'http://trusted-app:secret@localhost:8080/oauth/token',
-  register_url: 'http://register-app:secret@localhost:9000/oauth/token',
   refresh_url: 'http://register-app:secret@localhost:8080/oauth/token',
+  authorization_code_url : 'http://'+AUTHORIZATION_SERVER_HOST +':' + AUTHORIZATION_SERVER_PORT +'/oauth/authorize',
+  access_token_url : 'http://'+AUTHORIZATION_SERVER_HOST +':' + AUTHORIZATION_SERVER_PORT +'/oauth/token',
+  logout_url : 'http://'+AUTHORIZATION_SERVER_HOST +':' + AUTHORIZATION_SERVER_PORT +'/exit',
   GET_ACCOUNT_URL: 'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/account',
   map_position_url: 'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/positions/within',
   map_archives_url: 'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/archives/within',
@@ -38,8 +42,9 @@ export const environment = {
  // store_invoices_url: 'http://localhost:8080/store/invoices',
  //
   // store_invoice_detail_url: 'http://localhost:8080/store/invoices/{id}',
-  store_invoice_pay_url: 'http://localhost:8080/store/invoices/{id}',
- // store_invoice_cancel_url: 'http://localhost:8080/store/invoices/{id}'
+  store_invoice_pay_url:  'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/store/invoices/{id}/pay',
+
+  // store_invoice_cancel_url: 'http://localhost:8080/store/invoices/{id}'
 
 };
 

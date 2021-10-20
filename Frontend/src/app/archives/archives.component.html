@@ -12,7 +12,9 @@
         <!-- Item ID Column -->
         <ng-container matColumnDef="Purchases">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Purchases </th>
-          <td mat-cell *matCellDef="let archive"> {{archive.count}} </td>
+          <td mat-cell *matCellDef="let archive">
+            <ng-container *ngIf="archive.purchases!=-1">{{archive.purchases}} </ng-container>
+          </td>
         </ng-container>
         <ng-container matColumnDef="CreatedBy">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Created By </th>

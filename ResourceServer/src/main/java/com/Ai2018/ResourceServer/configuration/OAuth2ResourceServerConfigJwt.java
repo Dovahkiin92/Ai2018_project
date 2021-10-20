@@ -34,6 +34,7 @@ public class OAuth2ResourceServerConfigJwt extends ResourceServerConfigurerAdapt
                         .and().authorizeRequests().antMatchers("/archives/**").hasAuthority("USER")
                         .and().authorizeRequests().antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         .and().authorizeRequests().antMatchers("/positions/**").hasRole("USER")
+                        .and().authorizeRequests().antMatchers("/store/**").hasRole("CUSTOMER")
                     .and()
                     .authorizeRequests().anyRequest().authenticated();
         // @formatter:on

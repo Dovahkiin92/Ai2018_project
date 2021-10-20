@@ -6,3 +6,7 @@
   border-radius: 50px;
   box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.1);
 }
+
+.apexcharts-active {
+  display: none !important;
+}

@@ -3,10 +3,8 @@
     <label>Select the positions to buy: </label>
    <mat-selection-list (selectionChange) = "onSelectPosition($event)">
    <mat-list-option
-     *ngFor="let position of positions"
-    [value] = position>
-    <!-- {{position.latitude}} - {{ position.longitude}}--->
-    ID: {{ position }}
+     *ngFor="let id of currentIds" [value] = id>
+    ID: {{ id }}
    </mat-list-option>
  </mat-selection-list>
   </div>

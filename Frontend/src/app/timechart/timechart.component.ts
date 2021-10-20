@@ -1,17 +1,17 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {Subscription} from "rxjs";
 import {PositionService} from "../_services/position.service";
 import {
-  ChartComponent,
   ApexAxisChartSeries,
   ApexChart,
-  ApexAnnotations,
-  ApexFill,
-  ApexXAxis,
   ApexDataLabels,
+  ApexFill,
+  ApexTitleSubtitle,
+  ApexTooltip,
+  ApexXAxis,
   ApexYAxis,
-  ApexTitleSubtitle, ApexTooltip
+  ChartComponent
 } from "ng-apexcharts";
 
 export type ChartOptions = {
@@ -28,7 +28,8 @@ export type ChartOptions = {
 @Component({
   selector: 'app-timechart',
   templateUrl: './timechart.component.html',
-  styleUrls: ['./timechart.component.css']
+  styleUrls: ['./timechart.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class TimechartComponent implements OnInit {
   @ViewChild("chart") chart: ChartComponent;
@@ -67,9 +68,9 @@ export class TimechartComponent implements OnInit {
     dataLabels: {
       enabled: false
     },
-      tooltip: {
+    tooltip: {
       enabled: false
-      },
+    },
     fill: {
       opacity: 0.8
     },
@@ -111,6 +112,7 @@ export class TimechartComponent implements OnInit {
     Object.keys(this.times).forEach(uid => {
       this.chartOptions.series.push({name: uid, data: this.times[uid] });
     });
+    this.chartOptions.tooltip.enabled = false;
     console.log(this.chartOptions);
   }
   public resetValues(): void{

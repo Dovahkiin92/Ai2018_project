@@ -17,6 +17,5 @@ export class AccountService {
     account.username = username;
     account.password = password;
     this.auth.register(account);
-
   }
 }

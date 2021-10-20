@@ -26,7 +26,7 @@ public class Archive {
     public void setPrice(double price) {this.price = price;}
 
     public int getPurchases() { return purchases;}
-
+    public Archive setPurchases(int i) { this.purchases = i; return this; }
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }

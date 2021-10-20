@@ -1,0 +1,10 @@
+com\Ai2018\AuthorizationServer\configuration\WebSecurityConfiguration.class
+com\Ai2018\AuthorizationServer\configuration\MongoConfiguration.class
+META-INF\spring-configuration-metadata.json
+com\Ai2018\AuthorizationServer\AuthorizationServerApplication.class
+com\Ai2018\AuthorizationServer\configuration\CorsFilter.class
+com\Ai2018\AuthorizationServer\models\Account.class
+com\Ai2018\AuthorizationServer\services\AccountService.class
+com\Ai2018\AuthorizationServer\repositories\AccountRepository.class
+com\Ai2018\AuthorizationServer\configuration\AuthorizationServerConfiguration.class
+com\Ai2018\AuthorizationServer\controllers\AccountController.class

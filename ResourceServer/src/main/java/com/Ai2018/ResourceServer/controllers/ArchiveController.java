@@ -39,7 +39,7 @@ public class ArchiveController {
     }
     @PreAuthorize("hasAnyRole('USER')")
     @GetMapping(path="/archives", produces="application/json")
-    public ResponseEntity<?> purchasedArchives(@AuthenticationPrincipal String username)//Authentication authentication)
+    public ResponseEntity<?> purchasedArchives(@AuthenticationPrincipal String username)
     {
         List<Archive> archives = archiveService.findOwnedArchives(username);
           return new ResponseEntity<>(archives, HttpStatus.OK);
@@ -50,10 +50,16 @@ public class ArchiveController {
             @RequestBody List<String> archiveIds,
             @AuthenticationPrincipal String username
     ) {
-        List<Archive> archives = archiveService.getArchives(archiveIds);
-        List<String> archive_ids = archives.stream().map(Archive::getId).collect(Collectors.toList());
-        Invoice invoice =  storeService.createInvoice(username, archive_ids); // only available archives
-        return new ResponseEntity<>(invoice, HttpStatus.OK);
+        List<String> archive_ids = archiveService.getAvailableArchives(archiveIds, username)
+                .stream()
+                .map(Archive::getId)
+                .collect(Collectors.toList());
+        if (archive_ids.size() > 0 ) {
+            Invoice invoice = storeService.createInvoice(username, archive_ids);
+            return new ResponseEntity<>(invoice, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // TODO error mgmt
+        }
     }
     @PreAuthorize("hasAnyRole('USER')")
     @RequestMapping(path="/archives/{archiveId}", produces="application/json", method = RequestMethod.DELETE)

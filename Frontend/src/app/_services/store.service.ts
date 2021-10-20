@@ -12,7 +12,14 @@ export class StoreService {
   getInvoices(): Observable<Invoice[]> {
      return this.http.get<Invoice[]>(environment.store_invoices_url);
   //  return this.http.get<Invoice[]>('../../assets/invoice.json');
-
+  }
+  createInvoice(res): Invoice{
+    let invoice = new Invoice();
+    invoice.id = res.id;
+    invoice.items = res.items;
+    invoice.username = res.username;
+    invoice.paid = res.paid;
+    return invoice;
   }
 
   getInvoice(invoiceId: string): Observable<Invoice> {

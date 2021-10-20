@@ -1,17 +1,13 @@
 package com.Ai2018.ResourceServer.controllers;
 
-import com.Ai2018.ResourceServer.models.Account;
 import com.Ai2018.ResourceServer.models.Invoice;
 import com.Ai2018.ResourceServer.services.AccountService;
 import com.Ai2018.ResourceServer.services.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

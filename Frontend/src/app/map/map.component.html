@@ -10,6 +10,15 @@
 </div>
     <app-purchase></app-purchase>
   </div>
+  <div>
+    <label>Owners:  </label>
+    <mat-selection-list #userList (selectionChange) = "onSelectUser($event)">
+      <mat-list-option
+        *ngFor="let id of users" [value] = id selected>
+        <strong>{{ id }}</strong>
+      </mat-list-option>
+    </mat-selection-list>
+  </div>
 <div class="mapContainer" id="map" style="height: 400px; width: 733px; margin: 0; padding: 0;"
      leaflet [leafletOptions]="mapOptions" (leafletMapReady)="onMapReady($event)">
   <div *ngIf="showControlLayer;else Else" leafletDraw [leafletDrawOptions]="drawOptions">

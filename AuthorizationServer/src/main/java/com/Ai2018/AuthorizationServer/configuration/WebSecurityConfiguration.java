@@ -35,9 +35,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/oauth/authorize**", "/login**","/oauth/token**").permitAll()
                 .and().authorizeRequests().antMatchers("/me**").hasAuthority("ADMIN")
                 .and().authorizeRequests().antMatchers("/register").hasAuthority("ROLE_REGISTER")
+                .and().authorizeRequests().antMatchers("/exit").hasAuthority("USER")
                 .and().authorizeRequests().anyRequest().authenticated()
-                .and().formLogin().permitAll()
-                .and().logout();
+                .and().formLogin().permitAll().and().logout()
+
+        ;
 
     }
     @Override

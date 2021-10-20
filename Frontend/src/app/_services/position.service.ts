@@ -11,7 +11,6 @@ import {AuthenticationService} from "./authentication.service";
   providedIn: 'root'
 })
 export class PositionService {
-  private counter = 0;
   boughtPositions;
 
  /* Archives selected to be bought */
@@ -27,14 +26,14 @@ export class PositionService {
   currentTimeSubject = new Subject<any[]>();
 
   constructor(private auth:AuthenticationService, private http: HttpClient) { }
-  /* save markers selected by polygon */
+  /* NOT NEEDED save markers selected by polygon */
   addSelectedMarker(marker: any[]): void {
     this.selectedMarkers = [];
     if ( marker ){
     marker.forEach(m => {
       const pos = new  Position();
       pos.latitude = m.lat;
-      pos.longitude = m. lng;
+      pos.longitude = m.lng;
       pos.userId = '';
       pos.timestamp = 10000;
       this.selectedMarkers.push(pos);
@@ -43,14 +42,13 @@ export class PositionService {
       this.selectedMarkers.push('EMPTY');
     }
     this.selectedSubject.next(this.selectedMarkers);
-    console.log('selected ' + this.selectedMarkers);
   }
 
   /* query data to server*/
   getMarkers(topRight: Position, bottomLeft: Position, start?, end?): void{
     let startTs = 0; // Min value date
     const date = new Date();
-    let  endTs = date.getTime() / 1000; // now time
+    let endTs = date.getTime() / 1000; // now time
     if (start !== undefined && end !== undefined) { // time interval is defined
       startTs = start / 1000;
       endTs = end / 1000;
@@ -72,10 +70,10 @@ export class PositionService {
       'to': endTs
     };
     const headers = new HttpHeaders({ 'Content-type': 'application/json; charset=utf-8'});
-    this.http.post(environment.map_archives_url, JSON.stringify( requestBody), { headers }).subscribe((res: any) => {
+    this.http.post(environment.map_archives_url, JSON.stringify( requestBody), { headers })
+      .subscribe((res: any) => {
       this.currentMarkers = [];
       this.currentTimestamps = [];
-      // .filter(archive => archive.userId != this.auth.getUsername()).
       res.forEach(archive => {
         archive.approxPositions.forEach( el => {
           let pos = new Position() ;
@@ -97,10 +95,13 @@ export class PositionService {
       this.currentTimeSubject.next(this.currentTimestamps);
     });
   }
+  changeDateRange(from: any, to: any) {
+    return this.getMarkers(this.currentBounds[0], this.currentBounds[1], from, to);
+  }
+  /*** LABS FUNCTIONS***/
   addBoughtPosition(positions: any): void{
     this.boughtPositions = positions;
   }
-  /*** LABS FUNCTIONS***/
   buyPositions(positions: Position[]): Observable<Invoice>{
     return this.http.post<Invoice>(environment.positions_buy_url, (positions));
   }
@@ -108,7 +109,5 @@ export class PositionService {
     return  this.http.post(environment.position_delete_url, position);
   }
 
-  changeDateRange(from: any, to: any) {
-    return this.getMarkers(this.currentBounds[0], this.currentBounds[1], from, to);
-  }
+
 }

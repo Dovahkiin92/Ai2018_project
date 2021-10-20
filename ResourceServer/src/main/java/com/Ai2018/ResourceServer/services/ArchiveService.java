@@ -1,7 +1,6 @@
 package com.Ai2018.ResourceServer.services;
 
 import com.Ai2018.ResourceServer.models.Archive;
-import com.Ai2018.ResourceServer.models.Invoice;
 import com.Ai2018.ResourceServer.models.Position;
 import com.Ai2018.ResourceServer.models.requestModels.ApproximatedArchive;
 import com.Ai2018.ResourceServer.models.requestModels.ApproximatedPosition;
@@ -19,6 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class ArchiveService {
     private static final double PRICE_PER_POSITION = 1.0 ;
+    private static final long ARCHIVE_DAYS_INTERVAL = 7;
     public int MAXIMUM_SPEED =100;
     @Autowired
     ArchiveRepository archiveRepository;
@@ -26,10 +26,12 @@ public class ArchiveService {
     private AccountService accountService;
     @Autowired
     private StoreService storeService;
+    @Autowired
+    private PositionService positionService;
 
     @Transactional
-    public Archive createArchive(String userId, ArrayList<Position> positions) {
-      //  positionRepository.checkPositions(positions); // Will throw if any position is not valid.
+    public Archive createArchive(String userId, ArrayList<Position> positions) throws Exception {
+        positionService.checkPositions(positions, ARCHIVE_DAYS_INTERVAL); // Will throw if any position is not valid.
         Archive a = new Archive();
         a.setUserId(userId);
         a.setPrice(positions.size() * PRICE_PER_POSITION);
@@ -42,14 +44,13 @@ public class ArchiveService {
     public List<Archive> findOwnedArchives(String username) {
         List<Archive> archives;
         archives = archiveRepository.findAllByUserIdEqualsAndDeletedFalse(username);
-        List<Invoice> invoices =  storeService.getInvoices(username);
-        if(archives!= null && invoices!= null && invoices.size()>0)
-        archives.addAll( invoices.stream()
-                        .map(Invoice::getItems)
-                        .flatMap(List::stream)
+        List<String> items =  storeService.getPurchasedItemIdsByUser(username);
+        if(archives!= null && items!= null && items.size()>0)
+        archives.addAll( items.stream()
                         .map(aid -> archiveRepository.findById(aid))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
+                        .map(a -> a.setPurchases(-1)) // user must not see this if not owner
                         .collect(Collectors.toList())
         );
         return archives;
@@ -120,9 +121,22 @@ public class ArchiveService {
             );
             return approx;
     }
+    public List<Archive> getAvailableArchives(List<String> archiveIds, String username) {
+        List<Archive> archives = this.getArchives(archiveIds);
+        // filter owned archives. User can't buy archives already bought
+        List<String> owned = this.findOwnedArchives(username)
+                .stream()
+                .map(Archive::getId)
+                .collect(Collectors.toList());
 
-    public List<Archive> getArchivesWithinPolygonAndTime(GeoJsonPolygon polygon, Long from, Long to) {
-        return archiveRepository.findAllByPositions_pointWithinAndPositions_timestampBetweenAndDeletedFalse(polygon,from,to);
+        return archives.stream()
+                .filter(a -> !owned.contains(a.getId()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Archive> getArchivesWithinPolygonAndTime(GeoJsonPolygon polygon, Long from, Long to, String username) {
+        List<Archive> archives = archiveRepository.findAllByPositions_pointWithinAndPositions_timestampBetweenAndDeletedFalse(polygon,from,to);
+        return this.getAvailableArchives(archives.stream().map(Archive::getId).collect(Collectors.toList()),username);
     }
 
     public void setDeleted(String username, String archiveId) throws Exception {

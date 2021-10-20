@@ -1,19 +1,15 @@
 package com.Ai2018.ResourceServer.services;
 
-import com.Ai2018.ResourceServer.models.Archive;
 import com.Ai2018.ResourceServer.models.Position;
-import com.Ai2018.ResourceServer.repositories.ArchiveRepository;
 import com.Ai2018.ResourceServer.repositories.PositionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class PositionService {
@@ -43,16 +39,20 @@ public class PositionService {
         return positionRepository.findAllByPointWithinAndTimestampBetween( area, from, to);
     }
 
-    public void checkPositions(List<Position> positions) throws Exception{
+    public void checkPositions(List<Position> positions, long timeInterval) throws Exception{
         Position previous = positions.get(0);
+        long firstTs = previous.getTimestamp();
+        long lastTs = positions.get(positions.size()-1).getTimestamp();
         for(Position p: positions.subList(1,positions.size())){
             System.out.println("Checking constraints between:"+previous+" "+p);
             if(!p.isValidTimestamp())  throw new Exception("Invalid Timestamp");
             if(!p.isGreaterTimestamp(previous)) throw new Exception("Invalid Sequence");
          if(p.getSpeed(previous)>=MAXIMUM_SPEED) throw new Exception("Invalid Sequence");
             System.out.println("Speed: "+p.getSpeed(previous));
-
         }
+        long days = TimeUnit.DAYS.convert(lastTs-firstTs, TimeUnit.SECONDS);
+
+        if(days > timeInterval) throw new Exception("Invalid Sequence");
     }
 
 

@@ -1,3 +1,4 @@
+
 import {Component, Input, OnInit} from '@angular/core';
 import {NavigationStart, Router} from '@angular/router';
 import {MenuItem} from './menu-item';

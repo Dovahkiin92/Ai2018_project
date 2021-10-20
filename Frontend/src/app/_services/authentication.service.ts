@@ -13,15 +13,15 @@ export class AuthenticationService {
   private username;
   public clientId = 'clientId';
   public redirectUri = 'http://localhost:4200';
-
+  public auth = false;
   constructor(
     private http: HttpClient) {
   }
 
   // retrieve auth code
   login(): void {
-    // window.location.href = 'http://localhost:8081/oauth/authorize?response_type=code&client_id='
-    window.location.href = 'http://192.168.99.103:9000/oauth/authorize?response_type=code&client_id='
+    this.auth= true;
+    window.location.href = environment.authorization_code_url+'?response_type=code&client_id='
       + this.clientId + '&redirect_uri='
       + this.redirectUri;
   }
@@ -40,7 +40,7 @@ export class AuthenticationService {
       'Authorization': 'Basic ' + btoa(this.clientId + ':secret')
     });
     // this.http.post('http://localhost:9000/oauth/token?code=' + code, params.toString(), {  headers })
-    this.http.post<JWT>('http://192.168.99.103:9000/oauth/token?code=' + code, params.toString(), {headers})
+    this.http.post<JWT>(environment.access_token_url + '?code=' + code, params.toString(), {headers})
       .subscribe(
         data => this.setSession(data),
         err => alert('Invalid Credentials')
@@ -93,6 +93,10 @@ export class AuthenticationService {
   logout(): void {
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
+    console.log('logout');
+    window.location.href =  environment.logout_url;
+   // return this.http.get('localhost:9000/exit');
+
   }
 
   getToken(): any {
@@ -113,42 +117,39 @@ export class AuthenticationService {
       'Authorization': 'Basic ' + btoa('register-app:secret')
     });
 
-    return this.http.post<JWT>('http://192.168.99.103:9000/oauth/token', params.toString(), {headers});
+    return this.http.post<JWT>(environment.access_token_url, params.toString(), {headers});
   }
 
   setRegistrationSession(data) {
     const expiresAt = new Date(data.expires_in);
     localStorage.setItem('registration_token', data.access_token);
-    localStorage.setItem('expires_at', expiresAt.toString());
+    localStorage.setItem('registration_expires_at', expiresAt.toString());
     console.log('Obtained Access token' + data);
   }
+  clearRegistrationSession(){
+    localStorage.removeItem('registration_token');
+    localStorage.removeItem('registration_expires_at');  }
 
-
-  register(account) {
+  register(account){
     this.retrieveRegistrationToken().subscribe(
       data => {
+        // continue to register user to resource server
         this.setRegistrationSession(data);
-
-        this.http.post<Account>(environment.api_url + '/register', account)
+        this.http.post<Account>(environment.register_url, account)
           .subscribe((res: any) => {
             if (res && res.id) {
               console.log('Successfully registered with id: ' + res.id);
+              this.clearRegistrationSession();
               this.login();
             } else {
               console.log('Failed to register.');
               console.log(res);
-            }
-          });
-      },
-      () => alert('Invalid Credentials')
-    );
-    // Submit registration using obtained token
+            }},
+            () => alert('Invalid Credentials'));
+        }
+      ,() => alert('Authorization failed') );
   }
 }
-
-
-
-
 
 /*
 import { Injectable } from '@angular/core';

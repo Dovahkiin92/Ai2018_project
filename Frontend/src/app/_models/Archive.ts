@@ -1,6 +1,6 @@
 export class Archive {
   id: string;
   userId: string;
-  count: number;
+  purchases: number;
   positions: Position[];
 }

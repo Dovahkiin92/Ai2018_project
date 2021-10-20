@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import * as L from 'leaflet';
 import {PositionService} from '../_services/position.service';
 import {Subscription} from 'rxjs';
@@ -6,13 +6,29 @@ import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 import {LeafletDrawModule} from '@asymmetrik/ngx-leaflet-draw';
 import {Position} from '../_models/Position';
 import {ArchiveService} from "../_services/archive.service";
+import {MatListOption, MatSelectionList} from "@angular/material/list";
 
+const iconRetinaUrl = 'assets/marker-icon-2x.png';
+const iconUrl = 'assets/marker-icon.png';
+const shadowUrl = 'assets/marker-shadow.png';
+const iconDefault = L.icon({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
+L.Marker.prototype.options.icon = iconDefault;
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css'],
   providers: [LeafletModule, LeafletDrawModule]
 })
+
 export class MapComponent implements OnInit, OnDestroy {
   subscription: Subscription;
   showControlLayer = true;
@@ -23,12 +39,15 @@ export class MapComponent implements OnInit, OnDestroy {
   private selectedMarkers = [];
   private selectedArchives = [];
   purchaseArea = L.layerGroup();
-
+  users  = [];
+  private selectedUsers = [];
+  @ViewChild('userList') userList: MatSelectionList;
   /****** MAP VARS ******/
 
   map: L.Map;
-  archiveLayers ={} ;
-  archiveColors ={} ;
+  archiveLayers ={};
+  archiveColors ={};
+  polygon;
   topRight: Position = new Position();
   bottomLeft: Position = new Position();
   drawnItems = L.featureGroup();
@@ -69,6 +88,7 @@ export class MapComponent implements OnInit, OnDestroy {
       featureGroup: this.drawnItems,
       edit: false,
     }};
+
   /************************/
   constructor(private positionService: PositionService, private archiveService: ArchiveService) {}
   ngOnInit(): void {
@@ -80,40 +100,30 @@ export class MapComponent implements OnInit, OnDestroy {
   }
   private initMap(): void {
     this.map.addLayer(this.drawnItems);
-  //  this.map.addControl(this.drawControl);
-  //  this.positionService.addMarkersToMap(this.map); // retrieve initial positions
-    const corners = this.getMapBounds();
+    const corners = this.getMapBounds(); // get topRight and bottomLeft
     this.positionService.getMarkers(corners[0], corners[1]);
     this.map.on( L.Draw.Event.CREATED, e => {
       if (e.layer instanceof L.Polygon) {
         this.getArchivesInPolygon(e.layer);
-       // e.layer.addTo(this.map);
       }
       console.log(e.layer);
       this.showControlLayer = false;
       this.drawOptionsDisabled.edit.featureGroup.addLayer(e.layer); // add remove button
-      this.disableAddButton = true;
+      this.disableAddButton = true; // disable form input
     });
-    this.map.on(L.Draw.Event.DELETED, ( e => {
+    this.map.on(L.Draw.Event.DELETED, ( () => { //remove polygon
       this.selectedMarkers = [];
-   //   this.drawControl.setDrawingOptions({ polygon: {}}); // enable drawings again
-      this.disableAddButton = true;
+      this.disableAddButton = false;
       this.showControlLayer = true;
+      this.polygon = [];
       this.positionService.addSelectedMarker(null);
       this.archiveService.addSelectedArchives(null);
-
-      // this.drawControl.addTo(this.map);
     }));
-    this.map.on('moveend', e =>{
+    this.map.on('moveend', e =>{ //request position in visible map
       console.log('Event'+ e);
       const corners = this.getMapBounds();
       this.positionService.getMarkers(corners[0], corners[1]);
     });
-   /* this.map.on(L.Draw.Event.DELETESTOP, (e => {
-        alert(e.layer);
-        this.selectedMarkers = [];
-      // do something when polygon is deleted
-    })); */
   }
 
   /* add markers received by service */
@@ -122,24 +132,26 @@ export class MapComponent implements OnInit, OnDestroy {
     positions.forEach(el => {
       const marker = L.circleMarker([el.latitude, el.longitude]);
       marker.bindPopup(this.popupBody(el));
-                             if( !this.archiveLayers[el.archiveId] ){
-                               this.archiveLayers[el.archiveId] = new L.LayerGroup();
-                               this.archiveColors[el.userId] = this.randomColor();
-                              // L.CircleMarker.mergeOptions({color: '#134111'});
-                               marker.setStyle({fillColor: this.archiveColors[el.userId]});
-                               marker.setStyle({color: this.archiveColors[el.userId]});
-                               console.log('Changing color!');
-                               marker.addTo(this.archiveLayers[el.archiveId]);
-                             } else{
-                            // marker.addTo(this.map)
-                               marker.setStyle({color: this.archiveColors[el.userId]});
-                               marker.setStyle({fillColor: this.archiveColors[el.userId]});
-                               marker.addTo(this.archiveLayers[el.archiveId]);}
+      // new archive -> new layer
+      if( !this.archiveLayers[el.archiveId] ) {
+        this.archiveLayers[el.archiveId] = new L.LayerGroup();
+        this.archiveLayers[el.archiveId].id = el.userId;
+        //new user -> new color
+        if (!this.archiveColors[el.userId]) {
+          this.users.push(el.userId);
+          this.selectedUsers.push(el.userId);
+          this.archiveColors[el.userId] = this.randomColor();
+        }
+      }
+      marker.setStyle({fillColor: this.archiveColors[el.userId]});
+      marker.setStyle({color: this.archiveColors[el.userId]});
+      marker.addTo(this.archiveLayers[el.archiveId]);
     });
+
     for( const list in this.archiveLayers) {
-      console.log(list);
-      console.log(this.archiveLayers[list]);
-      this.archiveLayers[list].addTo(this.map);
+      if( this.selectedUsers.includes(this.archiveLayers[list].id)) {
+        this.archiveLayers[list].addTo(this.map);
+      }
     }
   }
   popupBody(position: any): string {
@@ -159,32 +171,36 @@ export class MapComponent implements OnInit, OnDestroy {
   /* Get positions inside selected area */
   getArchivesInPolygon(l): void{
     const poly = l.getLatLngs();
-    this.archiveService.addSelectedArchives(null);
+    this.polygon =l;
+    this.archiveService.addSelectedArchives(null); // reset current archives in service
+    this.selectedArchives = [];
     Object.keys(this.archiveLayers).forEach((key) => {
       console.log(key);
+      console.log(this.selectedUsers);
+      if(this.selectedUsers.includes(this.archiveLayers[key].id)){
       this.archiveLayers[key].eachLayer(layer => {
-        console.log('layer - ' + layer);
       if (layer instanceof L.CircleMarker && layer.getPopup() != null && this.isMarkerInsidePolygon(layer, poly[0])) {
         this.selectedMarkers.push(layer.getLatLng());
-        if(! this.selectedArchives.includes(key)) {
+        if(! this.selectedArchives.includes(key)) { //exclude duplicates
           this.selectedArchives.push(key);
         }
       }
-    });
+    });}
     });
     if (this.selectedMarkers.length > 0 ){
-        this.selected = true; // positions can be purchased
+        this.selected = true; // archives can be purchased
     }
     this.positionService.addSelectedMarker(this.selectedMarkers);
     this.archiveService.addSelectedArchives(this.selectedArchives);
   }
   deletePositions(): void {
     this.map.eachLayer(l => {
-      if (l instanceof L.Marker && l.getPopup() != null) {
+      console.log('layer delete ' + l);
+      if (l instanceof L.CircleMarker && l.getPopup() != null) {
         this.map.removeLayer(l);
       }});
   }
-  /*RESET BUTTON*/
+  /*RESET BUTTON FORM SELECTION*/
   removeAreaSelection(): void{
     this.map.eachLayer(l => {
       if (l instanceof L.CircleMarker && l.getPopup() != null) {
@@ -194,11 +210,13 @@ export class MapComponent implements OnInit, OnDestroy {
     });
     this.selected = false;
     this.positionService.addSelectedMarker(null);
+    this.archiveService.addSelectedArchives(null);
     this.selectedMarkers = [];
+    this.selectedArchives = [];
     this.showControlLayer = true;
     this.disableAddButton = false;
   }
-  // select area through coordinates
+  // FORM SELECTION POLYGON
   addSelectionPoint(): void{
     const marker = L.circleMarker([this.position.lat, this.position.lng],
       {radius: 4, color: 'rgba(192,0,61,0.71)', fillColor: '#0040c0', fillOpacity: 1.0}); // add the marker onclick
@@ -208,6 +226,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.disableFinishButton = false;
     console.log(this.purchaseArea);
   }
+  // FORM SELECTION DRAW
   drawPolygon(): void{
     const latlngs = [];
     this.purchaseArea.eachLayer((l: L.Marker) => latlngs.push(l.getLatLng()));
@@ -242,13 +261,34 @@ export class MapComponent implements OnInit, OnDestroy {
     this.topRight.longitude = this.map.getBounds().getNorthEast().lng;
     return [this.topRight, this.bottomLeft];
   }
-
+  onSelectUser(event: any): void {
+    const option = event.option;
+    if (option.selected) {
+      this.selectedUsers.push(option.value);
+      for( const list in this.archiveLayers) {
+        if (this.archiveLayers[list].id == option.value) {
+          this.archiveLayers[list].addTo(this.map);
+        }
+      }
+    } else { //undo selection
+      const index = this.selectedUsers.indexOf(option.value);
+      this.selectedUsers.splice(index, 1);
+      for( const list in this.archiveLayers) {
+       if(this.archiveLayers[list].id == option.value){
+         this.archiveLayers[list].removeFrom(this.map);
+       }
+      }
+    }
+    if( this.polygon ){
+      console.log('got'+this.polygon);
+    this.getArchivesInPolygon(this.polygon);
+    }
+  }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
     this.positionService.addSelectedMarker(null); // clear selection
     this.map.off();
     this.map.remove();
-    console.log('ADIEU');
   }
 
 }

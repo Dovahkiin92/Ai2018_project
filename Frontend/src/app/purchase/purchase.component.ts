@@ -1,28 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import * as L from 'leaflet';
 import {PositionService} from '../_services/position.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {CheckoutDialogComponent} from './checkout-dialog/checkout-dialog.component';
 import {Invoice} from '../_models/Invoice';
 import {Router} from '@angular/router';
-import {StoreService} from '../_services/store.service';
 import {ArchiveService} from '../_services/archive.service';
-
-const iconRetinaUrl = 'assets/marker-icon-2x.png';
-const iconUrl = 'assets/marker-icon.png';
-const shadowUrl = 'assets/marker-shadow.png';
-const iconDefault = L.icon({
-  iconRetinaUrl,
-  iconUrl,
-  shadowUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  tooltipAnchor: [16, -28],
-  shadowSize: [41, 41]
-});
-L.Marker.prototype.options.icon = iconDefault;
+import {StoreService} from "../_services/store.service";
 
 @Component({
   selector: 'app-purchase',
@@ -31,44 +15,33 @@ L.Marker.prototype.options.icon = iconDefault;
 })
 export class PurchaseComponent implements OnInit, OnDestroy {
    subscription: Subscription;
-   positions = [];
-   selectedPositions = [];
+   currentIds = [];
+   selectedIds = [];
    selected: boolean = false;
    totalPrice = 0;
   private invoice: any;
-  constructor(private positionService: PositionService,
-              public dialog: MatDialog,
+  constructor(public dialog: MatDialog,
               public archiveService: ArchiveService,
+              private storeService: StoreService,
               public router: Router ) {}
 
   ngOnInit(): void {
-    // this.subscription = this.positionService.selectedSubject.subscribe(markers => {
     this.subscription = this.archiveService.selectedArchivesSubject.subscribe(ids => {
       ids.forEach(id => {
         if ( id !== 'EMPTY' ){
-          console.log('EL - ' + id);
-          this.positions.push(id);
+          this.currentIds.push(id);
         } else {
-          this.positions = [];
+          this.currentIds = [];
+          this.selectedIds = [];
+          this.selected = false;
         }
       });
     });
   }
-
   onConfirmPurchase(): void {
-    const positions = [];
-  //  for (const layer of this.selectedPositions) {
-  //    positions.push(layer);
-  //  }
-    // this.positionService.addBoughtPosition(this.selectedPositions);
-    this.archiveService.addBoughtArchives(this.selectedPositions);
-    this.archiveService.buyArchives(this.selectedPositions).subscribe(res => {
-    this.invoice = new Invoice();
-    this.invoice.id = res.id;
-    this.invoice.items = res.items;
-    this.invoice.username = res.username;
-    this.invoice.paid = res.paid;
-    alert(this.invoice.id);
+    this.archiveService.addBoughtArchives(this.selectedIds);
+    this.archiveService.buyArchives(this.selectedIds).subscribe(res => {
+    this.invoice =  this.storeService.createInvoice(res);
     this.openDialog();
     },
       () => {console.log('ERROR GENERATING INVOICE'); }   );
@@ -83,25 +56,24 @@ export class PurchaseComponent implements OnInit, OnDestroy {
       if (res) {
         this.router.navigate(['/store', this.invoice.id]);
       } else{
-        this.selectedPositions = [];
+        this.selectedIds = [];
       }
     });
   }
   onSelectPosition(event: any): void {
     const option = event.option;
     if (option.selected) {
-      this.selectedPositions.push(option.value);
-      this.totalPrice += 1;
+      this.selectedIds.push(option.value);
+      this.totalPrice += 1; // TODO: get archive price
       this.selected =  true;
-    } else {
-      const index = this.selectedPositions.indexOf(option.value);
-      this.selectedPositions.splice(index, 1);
+    } else { //undo selection
+      const index = this.selectedIds.indexOf(option.value);
+      this.selectedIds.splice(index, 1);
       this.totalPrice -= 1;
-      if(this.selectedPositions.length == 0){
+      if(this.selectedIds.length == 0){
         this.selected = false;
       }
     }
-    console.log('OnSelectArchive', option, this.selectedPositions);
   }
   ngOnDestroy(): void{
     this.subscription.unsubscribe();

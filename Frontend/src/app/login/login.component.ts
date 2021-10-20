@@ -14,11 +14,10 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.auth.isAuthenticated()) {
-      this.auth.logout();
-      window.location.href = 'http://localhost:4200';
+      this.auth.logout();//.subscribe(data => alert(data));
+      this.router.navigate(['/']);
     } else {
        this.auth.login();
-      // this.router.navigateByUrl('/account');
     }
   }
 }

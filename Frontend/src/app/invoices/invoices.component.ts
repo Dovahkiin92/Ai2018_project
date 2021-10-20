@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Location} from '@angular/common';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSort} from '@angular/material/sort';
@@ -17,7 +17,7 @@ import {Invoice} from '../_models/Invoice';
   templateUrl: './invoices.component.html',
   styleUrls: ['./invoices.component.css']
 })
-export class InvoicesComponent implements OnInit, AfterViewInit {
+export class InvoicesComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns: string[] = ['id', 'createdAt', 'amount', 'isPaid', 'actions'];
   dataSource = new MatTableDataSource();
   invoice: any;
@@ -35,23 +35,29 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(params => {
       const currentId = params.get('id');
-      if ( currentId  ) {
+      if (currentId) {
         this.storeService.getInvoice(currentId).subscribe(
           invoice => {
             console.log('Invoices retrieved', invoice.id);
             this.invoice = invoice;
             this.reload();
             this.detailsInvoice(this.invoice);
-             },
-          err => console.log('Error getting invoice', err)
+          },
+          () => this.snackBar.open('Server currently unavailable', 'Retry')
+            .onAction().subscribe(() => window.location.reload())
         );
-      } else{
-        this.storeService.getInvoices().subscribe( items => {
+      } else {
+        this.storeService.getInvoices().subscribe(items => {
             console.log('items' + items);
-            if ( items.length === 0) {
+            if (items.length === 0) {
               this.noInvoices = true;
             }
             this.dataSource.data = items;
+          },
+          err => {
+            console.log('error' + err);
+            this.snackBar.open('Server currently unavailable', 'Retry')
+              .onAction().subscribe(() => window.location.reload());
           });
       }
     });
@@ -61,20 +67,14 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
   }
-
-  goBack(): void {
-    this.location.back();
-  }
-
   reload(): void {
     const invoices = this.storeService.getInvoices();
     invoices.subscribe( items => {
         console.log('Invoices retrieved', items);
         this.dataSource.data = items;
       },
-      err => {
-        console.log('Error retrieving invoices', err);
-      });
+      () => this.snackBar.open('Server currently unavailable', 'Retry')
+        .onAction().subscribe(()=> window.location.reload()));
   }
 
   detailsInvoice(invoice: any): void {
@@ -126,5 +126,8 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
           });
       }
     });
+  }
+  ngOnDestroy() {
+    this.snackBar.dismiss();
   }
 }

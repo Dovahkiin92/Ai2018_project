@@ -61,7 +61,7 @@ public class StoreService {
         buyer.setWallet(buyer.getWallet() - invoice.getAmount());
         accountRepository.save(buyer);
 
-        //pay sellers and increment cunter
+        //pay sellers and increment counter
         List<Archive> items = invoice.getItems().stream()
                 .map(i-> archiveRepository.findById(i))
                 .filter(Optional::isPresent)
@@ -97,7 +97,6 @@ public class StoreService {
     public List<Invoice> getInvoices(String username){
         return invoiceRepository.findByUsername(username);
     }
-
     @Transactional
     public Invoice getInvoice(String username, String invoiceId) throws Exception {
         Invoice invoice = invoiceRepository.findByIdAndUsername(invoiceId, username);

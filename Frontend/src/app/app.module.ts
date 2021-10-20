@@ -45,6 +45,7 @@ import { ArchivesComponent } from './archives/archives.component';
 import { TimechartComponent } from './timechart/timechart.component';
 import { NgApexchartsModule } from "ng-apexcharts";
 import { RegisterComponent } from './register/register.component';
+import {MatGridListModule} from "@angular/material/grid-list";
 
 @NgModule({
   declarations: [
@@ -66,33 +67,34 @@ import { RegisterComponent } from './register/register.component';
     TimechartComponent,
     RegisterComponent
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    LeafletModule,
-    LeafletDrawModule,
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
-    AppRoutingModule,
-    MatDatepickerModule,
-    MatFormFieldModule,
-    MatNativeDateModule,
-    MatCardModule,
-    MatListModule,
-    MatIconModule,
-    HttpClientModule,
-    MatToolbarModule,
-    MatMenuModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatTableModule,
-    MatSnackBarModule,
-    MatPaginatorModule,
-    MatInputModule,
-    MatOptionModule,
-    NgApexchartsModule
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        LeafletModule,
+        LeafletDrawModule,
+        HttpClientModule,
+        FormsModule,
+        ReactiveFormsModule,
+        AppRoutingModule,
+        MatDatepickerModule,
+        MatFormFieldModule,
+        MatNativeDateModule,
+        MatCardModule,
+        MatListModule,
+        MatIconModule,
+        HttpClientModule,
+        MatToolbarModule,
+        MatMenuModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatTableModule,
+        MatSnackBarModule,
+        MatPaginatorModule,
+        MatInputModule,
+        MatOptionModule,
+        NgApexchartsModule,
+        MatGridListModule
+    ],
   providers: [PositionService, AccountService, AuthenticationService, StoreService, ArchiveService, AuthGuard,
     {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true}],
   bootstrap: [AppComponent]

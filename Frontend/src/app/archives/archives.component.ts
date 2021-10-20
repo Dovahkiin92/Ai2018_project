@@ -121,7 +121,7 @@ export class ArchivesComponent implements OnInit, OnChanges, AfterViewInit {
   /*add new file name*/
   onFileChange(event: any): any {
     for (const file of  event.target.files) {
-      if (! this.validateFile(file.name)){
+      if (! this.validateFile(file)){
         this.snackBar.open('Error: file must be .json extension.', 'Close', {duration: 6000});
       } else {
         this.myFiles.push(file);
@@ -129,9 +129,10 @@ export class ArchivesComponent implements OnInit, OnChanges, AfterViewInit {
     }
     this.enableUpload = true;
   }
-  validateFile(name: string): boolean {
-    const ext = name.substring(name.lastIndexOf('.') + 1);
-    return ext.toLowerCase() === 'json';
+  validateFile(file): boolean {
+    const ext =file.name.substring(file.name.lastIndexOf('.') + 1);
+    console.log(file.type);
+    return file.type ==="application/json" && ext.toLowerCase() === 'json';
   }
   removeFile(file): void {
     this.myFiles.forEach( (item, index) => {

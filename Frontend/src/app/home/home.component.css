@@ -23,3 +23,8 @@
   transform: translate(-50%, -50%);
   color: white;
 }
+button{
+  width:150px;
+  height:55px;
+  background-color: #ffba00;
+}
