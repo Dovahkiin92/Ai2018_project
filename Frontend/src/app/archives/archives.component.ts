@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild, Input, OnChanges} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild, Input, OnChanges, EventEmitter, Output} from '@angular/core';
 import {ArchiveService} from '../_services/archive.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
@@ -19,6 +19,7 @@ import {Archive} from "../_models/Archive";
 })
 export class ArchivesComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() accountId !: string;
+  @Output() posEmitter: EventEmitter<Position[]> = new EventEmitter<Position[]>();
   archives = [];
   // displayedColumns: string[] = ['lat', 'lng', 'createdAt', 'actions'];
   displayedColumns: string[] = ['ArchiveId', 'CreatedBy','Purchases', 'Actions'];
@@ -34,7 +35,7 @@ export class ArchivesComponent implements OnInit, OnChanges, AfterViewInit {
   });
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-
+  positions:Position[] = [];
   constructor( private archiveService: ArchiveService,
                private positionService: PositionService,
                private dialog: MatDialog,
@@ -56,24 +57,24 @@ export class ArchivesComponent implements OnInit, OnChanges, AfterViewInit {
   getArchives(): void{
     this.archiveService.getArchives().subscribe(
       (alist: any) => {
-        console.log(alist);
         this.archives = [];
-        alist.forEach(a => this.archives.push(a) );
+        this.positions = [];
+        alist.forEach(a => {
+          this.archives.push(a);
+          a.positions.forEach(p =>{ p.archiveId = a.id; this.positions.push(p);});
+        });
+
         this.dataSource.data = this.archives ;
         if( alist.length >0) {
           this.noArchives = false;
         }
+        this.posEmitter.emit(this.positions);
       }, err =>
         this.snackBar.open('Error!', 'Close', {duration: 6000})
       );
   }
   reload(): void {
-    this.archiveService.getArchives().subscribe( items => {
-        this.dataSource.data = items;
-      },
-      err => {
-        console.log('Error retrieving data', err);
-      });
+    this.getArchives();
   }
   removeDialog(archive: Archive): void {
     const dialogRef = this.dialog.open(ArchiveCancelDialogComponent, {

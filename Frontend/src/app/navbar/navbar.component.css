@@ -7,24 +7,21 @@
   }
 }
 .toolbar {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: #ffba00;
   color: black;
-  font-weight: 600;
 }
 .toolbar img {
-  margin: 0 16px;
 }
 
 .toolbar-logo {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  margin: 0 16px;
-
 }
 
 .toolbar #app-logo:hover {
+}
+button{
+  height: 64px ;
 }

@@ -10,3 +10,14 @@ p {
 table {
   width: 100%;
 }
+mat-card {
+  margin: 16px;
+  width: 500px;
+  text-align: left;
+}
+.row{
+  display: flex;
+  box-sizing: border-box;
+  justify-content: space-between;
+
+}

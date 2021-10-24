@@ -1,5 +1,6 @@
 package com.Ai2018.ResourceServer.services;
 
+import com.Ai2018.ResourceServer.models.Account;
 import com.Ai2018.ResourceServer.models.Archive;
 import com.Ai2018.ResourceServer.models.Position;
 import com.Ai2018.ResourceServer.models.requestModels.ApproximatedArchive;
@@ -41,10 +42,10 @@ public class ArchiveService {
         return a;
     }
 
-    public List<Archive> findOwnedArchives(String username) {
+    public List<Archive> findOwnedArchives(String username) throws Exception{
         List<Archive> archives;
         archives = archiveRepository.findAllByUserIdEqualsAndDeletedFalse(username);
-        List<String> items =  storeService.getPurchasedItemIdsByUser(username);
+      /*  List<String> items =  storeService.getPurchasedItemIdsByUser(username);
         if(archives!= null && items!= null && items.size()>0)
         archives.addAll( items.stream()
                         .map(aid -> archiveRepository.findById(aid))
@@ -52,6 +53,11 @@ public class ArchiveService {
                         .map(Optional::get)
                         .map(a -> a.setPurchases(-1)) // user must not see this if not owner
                         .collect(Collectors.toList())
+        );*/
+        archives.addAll(this.getArchives(accountService.findAccountByUsername(username).getPurchasedArchives())
+                .stream()
+                .map(a->a.setPurchases(-1))
+                .collect(Collectors.toList())
         );
         return archives;
     }
@@ -121,7 +127,7 @@ public class ArchiveService {
             );
             return approx;
     }
-    public List<Archive> getAvailableArchives(List<String> archiveIds, String username) {
+    public List<Archive> getAvailableArchives(List<String> archiveIds, String username) throws Exception {
         List<Archive> archives = this.getArchives(archiveIds);
         // filter owned archives. User can't buy archives already bought
         List<String> owned = this.findOwnedArchives(username)
@@ -134,7 +140,7 @@ public class ArchiveService {
                 .collect(Collectors.toList());
     }
 
-    public List<Archive> getArchivesWithinPolygonAndTime(GeoJsonPolygon polygon, Long from, Long to, String username) {
+    public List<Archive> getArchivesWithinPolygonAndTime(GeoJsonPolygon polygon, Long from, Long to, String username) throws Exception{
         List<Archive> archives = archiveRepository.findAllByPositions_pointWithinAndPositions_timestampBetweenAndDeletedFalse(polygon,from,to);
         return this.getAvailableArchives(archives.stream().map(Archive::getId).collect(Collectors.toList()),username);
     }
@@ -147,7 +153,9 @@ public class ArchiveService {
             archiveRepository.save(a.get());
         } else if(a.isPresent()){
             try { // remove  from purchased archives list if present
-                accountService.findAccountByUsername(username).removeArchive(archiveId);
+                Account account = accountService.findAccountByUsername(username);
+                account.removeArchive(archiveId);
+                accountService.update(account);
             }catch (Exception e){
                 throw new Exception(e.getMessage());
             }

@@ -72,6 +72,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit, OnDestroy {
     invoices.subscribe( items => {
         console.log('Invoices retrieved', items);
         this.dataSource.data = items;
+        this.dataSource.sort = this.sort;
       },
       () => this.snackBar.open('Server currently unavailable', 'Retry')
         .onAction().subscribe(()=> window.location.reload()));
@@ -104,7 +105,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.reload();
         },
         err => {
-          this.snackBar.open('Unable to proceed.', 'Close', {duration: 800});
+          this.snackBar.open('Unable to proceed. Check your wallet', 'Close', {duration: 1500});
         });
       }
     });

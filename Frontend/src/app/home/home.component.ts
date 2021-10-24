@@ -19,4 +19,11 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {}
+  onClick(){
+    if( this.auth.isAuthenticated()){
+      this.router.navigate(['/store']);
+    } else{
+      this.router.navigate(['/register']);
+    }
+  }
 }

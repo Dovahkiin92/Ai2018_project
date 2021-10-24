@@ -3,14 +3,14 @@
   <img
     width="40" id="app-logo"
     src="assets/img/app-logo.png"
-     /><span>Mobile Data Marketplace</span>
+      alt="logo"/><span> Mobile Data Marketplace</span>
   </button>
-  <div  >
+  <div >
   <button mat-button *ngFor="let item of getMenuItems()" [routerLink]="item.link" fxHide.xs >
     <mat-icon class="mr">{{item.icon}}</mat-icon>
     {{item.label}}
   </button>
-  <button mat-icon-button [matMenuTriggerFor]="dropMenu" fxHide fxShow.xs>
+  <button *ngIf="false" mat-icon-button [matMenuTriggerFor]="dropMenu" fxHide fxShow.xs>
     <mat-icon>more_vert</mat-icon>
   </button>
 

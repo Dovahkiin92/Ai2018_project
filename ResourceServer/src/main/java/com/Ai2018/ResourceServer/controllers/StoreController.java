@@ -1,5 +1,6 @@
 package com.Ai2018.ResourceServer.controllers;
 
+import com.Ai2018.ResourceServer.models.Account;
 import com.Ai2018.ResourceServer.models.Invoice;
 import com.Ai2018.ResourceServer.services.AccountService;
 import com.Ai2018.ResourceServer.services.StoreService;
@@ -43,7 +44,7 @@ public class StoreController {
         try {
             Invoice invoice = storeService.payInvoice(username, invoiceId);
             if(invoice.getPaid()) {
-                accountService.findAccountByUsername(username).addArchives(invoice.getItems());
+               storeService.buyArchives(username,invoice);
             }
             return new ResponseEntity<Invoice>(invoice, HttpStatus.OK);
         }

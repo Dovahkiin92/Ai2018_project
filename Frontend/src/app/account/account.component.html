@@ -1,21 +1,22 @@
 <div>
   <div class="row">
-
-    <div class="col-md-8 offset-md-2 account-wrapper">
-      <mat-card *ngIf="account">
+    <div>
+      <mat-card>
         <mat-card-title>My Profile</mat-card-title>
         <mat-card-content>
           <mat-list>
             <mat-list-item><strong>Name: </strong> {{account.username}}</mat-list-item>
             <mat-list-item>
-              <strong>Wallet: </strong> {{account.wallet}}  <strong>€ </strong>
+              <strong>Wallet:</strong>  <span>{{account.wallet}} </span> <strong> € </strong>
             </mat-list-item>
           </mat-list>
         </mat-card-content>
-      </mat-card>
+      </mat-card></div>
+      <div class="mapContainer" id="map" style="height: 400px; width: 633px; margin-top: 16px; padding: 0;"
+           leaflet [leafletOptions]="mapOptions" (leafletMapReady)="onMapReady($event)">
     </div>
   </div>
   <div *ngIf="account">
-  <app-archives   [accountId]="account.id"></app-archives>
+  <app-archives   [accountId]="account.id" (posEmitter)="showPositions($event)" ></app-archives>
   </div>
 </div>

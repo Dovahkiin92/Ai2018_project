@@ -29,6 +29,10 @@ public class Account implements UserDetails {
         this.purchasedArchives= new ArrayList<>();
     }
 
+    public List<String> getPurchasedArchives() {
+        return purchasedArchives;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.authorities;
@@ -88,4 +92,5 @@ public class Account implements UserDetails {
     public double getWallet(){
         return this.wallet;
     }
+
 }

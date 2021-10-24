@@ -46,6 +46,7 @@ import { TimechartComponent } from './timechart/timechart.component';
 import { NgApexchartsModule } from "ng-apexcharts";
 import { RegisterComponent } from './register/register.component';
 import {MatGridListModule} from "@angular/material/grid-list";
+import {MatSortModule} from "@angular/material/sort";
 
 @NgModule({
   declarations: [
@@ -93,7 +94,8 @@ import {MatGridListModule} from "@angular/material/grid-list";
         MatInputModule,
         MatOptionModule,
         NgApexchartsModule,
-        MatGridListModule
+        MatGridListModule,
+        MatSortModule
     ],
   providers: [PositionService, AccountService, AuthenticationService, StoreService, ArchiveService, AuthGuard,
     {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true}],

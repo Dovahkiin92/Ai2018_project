@@ -31,6 +31,7 @@ export class PurchaseComponent implements OnInit, OnDestroy {
         if ( id !== 'EMPTY' ){
           this.currentIds.push(id);
         } else {
+          this.totalPrice = 0;
           this.currentIds = [];
           this.selectedIds = [];
           this.selected = false;
@@ -48,8 +49,6 @@ export class PurchaseComponent implements OnInit, OnDestroy {
   }
   openDialog(): void {
     const dialogRef = this.dialog.open(CheckoutDialogComponent, {
-      width: '400px',
-      height: '300px',
       data : this.invoice
     });
     dialogRef.afterClosed().subscribe(res => {

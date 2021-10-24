@@ -22,7 +22,8 @@ public class StoreService {
 
     @Autowired
     protected AccountRepository accountRepository;
-
+    @Autowired
+    private AccountService accountService;
     @Autowired
     private ArchiveRepository archiveRepository;
 
@@ -63,6 +64,7 @@ public class StoreService {
 
         //pay sellers and increment counter
         List<Archive> items = invoice.getItems().stream()
+                .filter(a->!buyer.getPurchasedArchives().contains(a)) //already bought
                 .map(i-> archiveRepository.findById(i))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -113,5 +115,14 @@ public class StoreService {
     public List<String> getPurchasedItemIdsByUser(String username){
         List<Invoice> purchased = invoiceRepository.findInvoiceByUsernameAndIsPaidIsTrue(username);
         return purchased.stream().map(Invoice::getItems).flatMap(Collection::stream).collect(Collectors.toList());
+    }
+
+    public void buyArchives(String username, Invoice invoice) throws Exception{
+        Account a = accountService.findAccountByUsername(username);
+        a.addArchives(invoice.getItems().stream()
+                .filter(id ->!a.getPurchasedArchives().contains(id)) //avoid duplicates
+                .collect(Collectors.toList())
+        );
+        accountService.update(a);
     }
 }

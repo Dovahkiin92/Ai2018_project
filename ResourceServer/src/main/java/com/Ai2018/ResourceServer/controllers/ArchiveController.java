@@ -6,6 +6,7 @@ import com.Ai2018.ResourceServer.models.Position;
 import com.Ai2018.ResourceServer.services.ArchiveService;
 import com.Ai2018.ResourceServer.services.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,8 +42,13 @@ public class ArchiveController {
     @GetMapping(path="/archives", produces="application/json")
     public ResponseEntity<?> purchasedArchives(@AuthenticationPrincipal String username)
     {
-        List<Archive> archives = archiveService.findOwnedArchives(username);
-          return new ResponseEntity<>(archives, HttpStatus.OK);
+        List<Archive> archives;
+        try {
+            archives = archiveService.findOwnedArchives(username);
+            return new ResponseEntity<>(archives, HttpStatus.OK);
+        }catch(Exception e) {
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND);
+        }
     }
     @PreAuthorize("hasAnyRole('USER')")
     @PostMapping(path="/archives/buy", produces="application/json")
@@ -50,6 +56,7 @@ public class ArchiveController {
             @RequestBody List<String> archiveIds,
             @AuthenticationPrincipal String username
     ) {
+        try{
         List<String> archive_ids = archiveService.getAvailableArchives(archiveIds, username)
                 .stream()
                 .map(Archive::getId)
@@ -57,7 +64,9 @@ public class ArchiveController {
         if (archive_ids.size() > 0 ) {
             Invoice invoice = storeService.createInvoice(username, archive_ids);
             return new ResponseEntity<>(invoice, HttpStatus.OK);
-        } else {
+        } else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // TODO error mgmt
         }
     }
