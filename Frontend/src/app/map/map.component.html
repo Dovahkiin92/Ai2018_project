@@ -1,17 +1,9 @@
 <div class="outer-container">
-  <div class="inner-container">
-<div class="form-group" style="width: 177px;">
-  <label>Insert Area Coordinates</label>
-  <input type ="text" class="form-control" id="lat" required  [(ngModel)]="position.lat" name="lat">
-  <input type ="text" class="form-control" id="lon" required  [(ngModel)]="position.lng" name="lon" >
-  <button type="button" class="btn btn-default" [disabled]="disableAddButton" (click)="addSelectionPoint()">Add</button>
-  <button type="button" class="btn btn-default"  (click)="removeAreaSelection()">Reset</button>
-  <button type="button" class="btn btn-default" [disabled]="disableFinishButton" (click)="drawPolygon()">Finish</button>
-</div>
-    <app-purchase></app-purchase>
+  <div class="flex-item">
+    <app-timechart></app-timechart>
   </div>
-  <div>
-    <label>Owners:  </label>
+  <div class="flex-item">
+    <mat-label>Owners:  </mat-label>
     <mat-selection-list #userList (selectionChange) = "onSelectUser($event)">
       <mat-list-option
         *ngFor="let id of users" [value] = id selected>
@@ -19,14 +11,18 @@
       </mat-list-option>
     </mat-selection-list>
   </div>
-<div class="mapContainer" id="map" style="height: 400px; width: 733px; margin: 0; padding: 0;"
-     leaflet [leafletOptions]="mapOptions" (leafletMapReady)="onMapReady($event)">
-  <div *ngIf="showControlLayer;else Else" leafletDraw [leafletDrawOptions]="drawOptions">
-  </div>
-  <ng-template #Else><div leafletDraw [leafletDrawOptions]="drawOptionsDisabled"></div>
-  </ng-template>
-</div></div>
   <div>
-    <app-timechart></app-timechart>
+  <div class="mapContainer" id="map"
+         leaflet [leafletOptions]="mapOptions" (leafletMapReady)="onMapReady($event)">
+      <div *ngIf="showControlLayer;else Else" leafletDraw [leafletDrawOptions]="drawOptions">
+      </div>
+      <ng-template #Else><div leafletDraw [leafletDrawOptions]="drawOptionsDisabled"></div>
+      </ng-template>
+  </div>
+    <mat-label *ngIf="this.selectedMarkers.length>0">Total selected: {{this.selectedMarkers.length}}</mat-label>
+  </div>
+</div>
+<div>
+  <app-purchase></app-purchase>
   </div>
 

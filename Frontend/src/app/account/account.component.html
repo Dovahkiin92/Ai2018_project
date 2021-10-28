@@ -1,6 +1,6 @@
 <div>
-  <div class="row">
-    <div>
+  <div class="flex-container">
+    <div class="flex-item" fxLayoutAlign="left" >
       <mat-card>
         <mat-card-title>My Profile</mat-card-title>
         <mat-card-content>
@@ -12,11 +12,13 @@
           </mat-list>
         </mat-card-content>
       </mat-card></div>
+    <div class="flex-item">
       <div class="mapContainer" id="map" style="height: 400px; width: 633px; margin-top: 16px; padding: 0;"
            leaflet [leafletOptions]="mapOptions" (leafletMapReady)="onMapReady($event)">
     </div>
   </div>
-  <div *ngIf="account">
+  <div class = "flex-item" style="width: 100%;" *ngIf="account">
   <app-archives   [accountId]="account.id" (posEmitter)="showPositions($event)" ></app-archives>
+  </div>
   </div>
 </div>

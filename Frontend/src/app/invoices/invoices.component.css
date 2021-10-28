@@ -1,7 +1,15 @@
 table {
+  justify-content: left;
   width: 100%;
+  text-align: left;
 }
-
 th.mat-sort-header-sorted {
   color: black;
+}
+mat-card {
+  margin: 16px;
+  width: 100%;
+}
+mat-card-title{
+  text-align: left;
 }

@@ -15,9 +15,16 @@ mat-card {
   width: 500px;
   text-align: left;
 }
-.row{
+.flex-container{
   display: flex;
+  flex-flow: column wrap;
+  flex-direction: row;
   box-sizing: border-box;
   justify-content: space-between;
-
+}
+.flex-container > div {
+  margin: 10px;
+  text-align: center;
+  line-height: 75px;
+  font-size: 30px;
 }

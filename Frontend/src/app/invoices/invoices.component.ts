@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Location} from '@angular/common';
 import {MatDialog} from '@angular/material/dialog';
-import {MatSort} from '@angular/material/sort';
+import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import { PayDialogComponent } from './pay-dialog/pay-dialog.component';
@@ -18,7 +18,7 @@ import {Invoice} from '../_models/Invoice';
   styleUrls: ['./invoices.component.css']
 })
 export class InvoicesComponent implements OnInit, AfterViewInit, OnDestroy {
-  displayedColumns: string[] = ['id', 'createdAt', 'amount', 'isPaid', 'actions'];
+  displayedColumns: string[] = ['id', 'createdAt', 'amount', 'paid', 'actions'];
   dataSource = new MatTableDataSource();
   invoice: any;
   @ViewChild(MatSort) sort: MatSort;
@@ -72,7 +72,6 @@ export class InvoicesComponent implements OnInit, AfterViewInit, OnDestroy {
     invoices.subscribe( items => {
         console.log('Invoices retrieved', items);
         this.dataSource.data = items;
-        this.dataSource.sort = this.sort;
       },
       () => this.snackBar.open('Server currently unavailable', 'Retry')
         .onAction().subscribe(()=> window.location.reload()));

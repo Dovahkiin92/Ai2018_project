@@ -36,7 +36,7 @@ export class MapComponent implements OnInit, OnDestroy {
   disableFinishButton = true;
   disableAddButton = false;
   private selected = false;
-  private selectedMarkers = [];
+  protected selectedMarkers = [];
   private selectedArchives = [];
   purchaseArea = L.layerGroup();
   users  = [];

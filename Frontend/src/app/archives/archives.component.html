@@ -1,23 +1,23 @@
-<div class= "row">
+<div >
   <mat-card>
     <mat-card-title>My Archives</mat-card-title>
     <mat-card-content>
       <!-- Unpaid invoices first -->
       <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
         <!-- ID Column -->
-        <ng-container matColumnDef="ArchiveId">
+        <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> archiveId </th>
           <td mat-cell *matCellDef="let archive"> {{archive.id}} </td>
         </ng-container>
         <!-- Item ID Column -->
-        <ng-container matColumnDef="Purchases">
+        <ng-container matColumnDef="purchases">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Purchases </th>
           <td mat-cell *matCellDef="let archive">
             <ng-container *ngIf="archive.purchases!=-1;else ElseBlock">{{archive.purchases}} </ng-container>
             <ng-template #ElseBlock> - </ng-template>
           </td>
         </ng-container>
-        <ng-container matColumnDef="CreatedBy">
+        <ng-container matColumnDef="userId">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Created By </th>
           <td mat-cell *matCellDef="let archive"> {{archive.userId}} </td>
         </ng-container>
@@ -27,7 +27,7 @@
           <td mat-cell *matCellDef="let position"> {{ position.timestamp*1000 | date: 'dd-MM-yyyy' }} </td>
         </ng-container>
          Actions Column -->
-        <ng-container matColumnDef="Actions" mat-sort-header>
+        <ng-container matColumnDef="Actions" >
           <th mat-header-cell *matHeaderCellDef> Actions </th>
           <td mat-cell *matCellDef="let archive">
             <button mat-icon-button color="primary" (click)="detailsDialog(archive)" aria-label="Details">
@@ -47,30 +47,30 @@
   </mat-card>
   <div>
   <mat-card>
-    <mat-card-content style="justify-content: center">
+    <mat-card-content>
   <form [formGroup]="myForm" (ngSubmit)="onUpload()" >
-  <div class="form-group">
-    <button  mat-flat-button color="accent" type="button" (click)="fileInput.click()">
+  <div>
+    <button *ngIf="!this.enableUpload" mat-flat-button class="upload-button" color="accent" type="button" (click)="fileInput.click()">
       <span>Upload</span>
       <input #fileInput type="file" multiple (change)="onFileChange($event)" formControlName="file"  id="file" style="display:none;" />
     </button>
   </div>
-    <button *ngIf="this.enableUpload" (click)="onUpload()"
-            class="btn btn-success">
-      Upload
-    </button>
+    <mat-list>
+      <mat-list-item *ngFor="let file of myFiles">
+        <span>{{file.name}}</span>
+        <mat-icon (click)="removeFile(file)">close</mat-icon>
+      </mat-list-item>
+    </mat-list>
+    <button mat-flat-button class="upload-button" *ngIf="this.enableUpload" (click)="onUpload()"
+            color="accent"> Done </button>
 </form>
-    </mat-card-content>
-  </mat-card>
+
   <!--Flag variable is used here-->
   <div class="container" *ngIf="loading">
     <h3>Loading ...</h3>
   </div>
-  <mat-list>
-    <mat-list-item *ngFor="let file of myFiles">
-      <span>{{file.name}}</span>
-      <mat-icon (click)="removeFile(file)">close</mat-icon>
-    </mat-list-item>
-  </mat-list>
+
+    </mat-card-content>
+  </mat-card>
 </div>
 </div>

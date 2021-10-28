@@ -1,17 +1,17 @@
 .mapContainer {
+  margin: 16px;
   display:block;
-  width: 100%;
   min-height: 400px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 5px;height: 400px; width: 733px;
 }
 .outer-container {
   display: flex;
+  flex-flow: column wrap;
   flex-direction: row;
   justify-content: space-between;
-  margin-left: 2%;
-  margin-right: 2%;
-  margin-top: 2%;
+  box-sizing: border-box;
+
 }
 .inner-container{
   flex-direction: column;

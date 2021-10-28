@@ -1,16 +1,17 @@
+
 <div class="outer-container">
-  <div>
+  <div class="inner-container">
     <label>Select the positions to buy: </label>
+  <div>
    <mat-selection-list (selectionChange) = "onSelectPosition($event)">
    <mat-list-option
      *ngFor="let id of currentIds" [value] = id>
-    ID: {{ id }}
+     <span style="font-weight: bold;">Id: </span>{{ id }}
    </mat-list-option>
  </mat-selection-list>
   </div>
- <div class="inner-container">
    <b> Total: {{totalPrice}}</b>
    <button [disabled]="!selected" mat-flat-button color="accent" (click)="onConfirmPurchase()"><mat-icon>shopping_cart</mat-icon> Buy </button>
- </div>
 </div>
 
+</div>

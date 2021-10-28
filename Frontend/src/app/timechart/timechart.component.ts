@@ -61,7 +61,7 @@ export class TimechartComponent implements OnInit {
           zoom: false,
           zoomin: true,
           zoomout: true,
-          pan: false
+          pan: true
         }
       }
     },
@@ -75,7 +75,7 @@ export class TimechartComponent implements OnInit {
       opacity: 0.8
     },
     title: {
-      text: "Time Chart"
+      text: "Time Density"
     },
     xaxis: {
       tickAmount: 20,

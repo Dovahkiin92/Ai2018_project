@@ -1,15 +1,14 @@
-.outer-container {
+.outer-container{
+  display: flex;
+  justify-content: center;
+}
+.inner-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-}
-.mat-selection-list{
-
-}
-.inner-container{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 300px;
+  justify-self: center;
 }
 .dialog{
   display: flex;

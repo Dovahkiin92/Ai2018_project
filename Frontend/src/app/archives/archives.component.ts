@@ -1,4 +1,14 @@
-import {AfterViewInit, Component, OnInit, ViewChild, Input, OnChanges, EventEmitter, Output} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  ViewChild,
+  ViewEncapsulation
+} from '@angular/core';
 import {ArchiveService} from '../_services/archive.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
@@ -15,14 +25,15 @@ import {Archive} from "../_models/Archive";
 @Component({
   selector: 'app-archives',
   templateUrl: './archives.component.html',
-  styleUrls: ['./archives.component.css']
+  styleUrls: ['./archives.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ArchivesComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() accountId !: string;
   @Output() posEmitter: EventEmitter<Position[]> = new EventEmitter<Position[]>();
   archives = [];
   // displayedColumns: string[] = ['lat', 'lng', 'createdAt', 'actions'];
-  displayedColumns: string[] = ['ArchiveId', 'CreatedBy','Purchases', 'Actions'];
+  displayedColumns: string[] = ['id', 'userId','purchases', 'Actions'];
   dataSource = new MatTableDataSource();
   loading = false; // Flag variable
   file: File = null; // Variable to store file
@@ -105,6 +116,7 @@ export class ArchivesComponent implements OnInit, OnChanges, AfterViewInit {
   /***** UPLOAD SECTION ****/
   onUpload(): void {
     this.loading = !this.loading;
+    this.enableUpload = false;
     this.myFiles.map(file => this.archiveService.upload(file).
       subscribe(
       (event: any) => {
