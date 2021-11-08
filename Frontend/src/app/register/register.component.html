@@ -1,11 +1,11 @@
-<div class="main-wrapper" fxLayout="row" fxLayoutAlign="center center">
+<div>
       <mat-card >
         <mat-card-title>Sign Up</mat-card-title>
         <mat-card-content>
           <mat-grid-list cols="1" >
             <mat-grid-tile >
            <div >
-            <form [formGroup]="registerForm" class="example-form">
+            <form [formGroup]="registerForm" >
               <mat-form-field>
                 <input matInput placeholder="Username"
                        formControlName="username"
@@ -25,7 +25,7 @@
                 <mat-error *ngIf="f.password.errors && f.password.errors.required">
                   enter password
                 </mat-error>
-              </mat-form-field><br>
+              </mat-form-field><br/><br/>
 
               <button mat-raised-button color="accent" class="register-btn" (click)="onSubmit()">
                 <mat-icon>person_add</mat-icon> Sign up

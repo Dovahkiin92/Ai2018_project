@@ -51,6 +51,7 @@ export class RegisterComponent implements OnInit {
     }
     this.loading = true;
     this.accountService.registerAccount(this.f.username.value, this.f.password.value);
+    this.router.navigate(['/']);
 
   }
 

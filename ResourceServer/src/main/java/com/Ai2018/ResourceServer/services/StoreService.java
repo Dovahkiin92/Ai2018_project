@@ -29,21 +29,23 @@ public class StoreService {
 
     public Invoice createInvoice(
             String username, List<String> itemId
-    )
-    {
-        Invoice invoice = new Invoice();
-        invoice.setAmount(itemId.stream()
-                .map(i-> archiveRepository.findById(i))
-                .map(Optional::get)
-                .map(Archive::getPrice)
-                .mapToDouble(Double::valueOf)
-                .sum());
-        invoice.setUsername(username);
-        invoice.setItems(itemId);
-        invoice.setPaid(false);
-        invoice.setCreatedAt((new Date()).getTime() / 1000);
-        invoiceRepository.save(invoice);
-        return invoice;
+    ) throws Exception
+    { Invoice invoice = new Invoice();
+            invoice.setAmount(itemId.stream()
+                    .map(i -> archiveRepository.findById(i))
+                    .map(Optional::get)
+                    .map(Archive::getPrice)
+                    .mapToDouble(Double::valueOf)
+                    .sum());
+            invoice.setUsername(username);
+            invoice.setItems(itemId);
+            invoice.setPaid(false);
+            invoice.setCreatedAt((new Date()).getTime() / 1000);
+            invoiceRepository.save(invoice);
+            Account account = this.accountService.findAccountByUsername(username);
+            this.accountService.grantRole(account, "CUSTOMER");
+            this.accountService.update(account);
+            return invoice;
     }
 
     @Transactional

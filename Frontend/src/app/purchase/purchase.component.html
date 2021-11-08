@@ -8,10 +8,11 @@
      *ngFor="let id of currentIds" [value] = id>
      <span style="font-weight: bold;">Id: </span>{{ id }}
    </mat-list-option>
+     <br/><br/>
  </mat-selection-list>
   </div>
    <b> Total: {{totalPrice}}</b>
-   <button [disabled]="!selected" mat-flat-button color="accent" (click)="onConfirmPurchase()"><mat-icon>shopping_cart</mat-icon> Buy </button>
+   <button style="margin-top:10px;"  [disabled]="!selected" mat-flat-button color="accent" (click)="onConfirmPurchase()"><mat-icon>shopping_cart</mat-icon> Buy </button>
 </div>
 
 </div>

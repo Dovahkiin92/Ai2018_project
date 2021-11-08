@@ -282,7 +282,7 @@
 </style>
 
 <!-- Toolbar -->
-<div >
+<div *ngIf="this.render" >
   <app-navbar [isLoggedIn]="logged"></app-navbar>
 </div>
 

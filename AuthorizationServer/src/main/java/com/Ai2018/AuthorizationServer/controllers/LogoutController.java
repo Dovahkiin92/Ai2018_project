@@ -8,11 +8,11 @@ import java.io.IOException;
 
 @RestController
 public class LogoutController {
-    @RequestMapping("/exit")
-    public void exit(HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/exit")
+    public void exit(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "returnTo") String referer) {
         new SecurityContextLogoutHandler().logout(request, null, null);
         try {
-            response.sendRedirect(request.getHeader("referer"));
+            response.sendRedirect(referer);
         } catch (IOException e) {
             e.printStackTrace();
         }

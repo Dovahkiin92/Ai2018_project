@@ -11,7 +11,7 @@ import {Account} from "../_models/Account";
 @Injectable()
 export class AuthenticationService {
   private username;
-  public clientId = 'clientId';
+  public clientId = environment.CLIENT_ID;
   public redirectUri = 'http://localhost:4200';
   public auth = false;
   constructor(
@@ -21,12 +21,14 @@ export class AuthenticationService {
   // retrieve auth code
   login(): void {
     this.auth= true;
-    window.location.href = environment.authorization_code_url+'?response_type=code&client_id='
-      + this.clientId + '&redirect_uri='
-      + this.redirectUri;
+   // window.location.href = environment.authorization_code_url+'?response_type=code&client_id='
+    window.open(environment.authorization_code_url +'?response_type=code&client_id='+ this.clientId
+      + '&redirect_uri=' + this.redirectUri
+      ,'popup',
+      'width=450,height=500,status=yes,location = off');
   }
 
-  retrieveToken(code): void {
+  retrieveToken(code): Observable<any> {
     const params = new URLSearchParams();
     params.append('grant_type', 'authorization_code');
     params.append('Authorization', 'Basic ' + btoa(this.clientId + ':secret'));
@@ -40,14 +42,10 @@ export class AuthenticationService {
       'Authorization': 'Basic ' + btoa(this.clientId + ':secret')
     });
     // this.http.post('http://localhost:9000/oauth/token?code=' + code, params.toString(), {  headers })
-    this.http.post<JWT>(environment.access_token_url + '?code=' + code, params.toString(), {headers})
-      .subscribe(
-        data => this.setSession(data),
-        err => alert('Invalid Credentials')
-      );
+    return this.http.post<JWT>(environment.access_token_url + '?code=' + code, params.toString(), {headers});
   }
 
-  private setSession(token): void {
+   setSession(token): void {
     const expiresAt = moment().add(token.expires_in, 'second');
     localStorage.setItem('id_token', token.access_token);
     localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
@@ -145,7 +143,7 @@ export class AuthenticationService {
               console.log('Failed to register.');
               console.log(res);
             }},
-            () => alert('Invalid Credentials'));
+            () => alert('Failed to register.'));
         }
       ,() => alert('Authorization failed') );
   }

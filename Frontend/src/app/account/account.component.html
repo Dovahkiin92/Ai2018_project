@@ -5,9 +5,13 @@
         <mat-card-title>My Profile</mat-card-title>
         <mat-card-content>
           <mat-list>
-            <mat-list-item><strong>Name: </strong> {{account.username}}</mat-list-item>
             <mat-list-item>
-              <strong>Wallet:</strong>  <span>{{account.wallet}} </span> <strong> € </strong>
+              <strong>Name: </strong>
+              <span style="margin-left: 20px;">{{account.username}} </span>
+            </mat-list-item>
+            <mat-list-item>
+              <strong>Wallet:</strong>  <span style="margin-left: 20px;">{{account.wallet}} </span> <strong> € </strong>
+              <mat-icon style="margin-left: 20px;" (click)="onTopUp()"> add_circle_outline</mat-icon>
             </mat-list-item>
           </mat-list>
         </mat-card-content>

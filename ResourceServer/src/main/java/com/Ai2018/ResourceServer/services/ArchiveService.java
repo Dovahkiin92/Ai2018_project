@@ -41,7 +41,7 @@ public class ArchiveService {
         archiveRepository.save(a);
         return a;
     }
-
+    /* get archives created and bought  by user */
     public List<Archive> findOwnedArchives(String username) throws Exception{
         List<Archive> archives;
         archives = archiveRepository.findAllByUserIdEqualsAndDeletedFalse(username);
@@ -54,7 +54,7 @@ public class ArchiveService {
                         .map(a -> a.setPurchases(-1)) // user must not see this if not owner
                         .collect(Collectors.toList())
         );*/
-        archives.addAll(this.getArchives(accountService.findAccountByUsername(username).getPurchasedArchives())
+        archives.addAll(this.getAllArchives(accountService.findAccountByUsername(username).getPurchasedArchives())
                 .stream()
                 .map(a->a.setPurchases(-1))
                 .collect(Collectors.toList())
@@ -93,8 +93,11 @@ public class ArchiveService {
                 .map(ArchiveService::approximate)
                 .collect(Collectors.toList());
     }
-    public List<Archive> getArchives(List<String> archiveIds) {
+    public List<Archive> getNonDeletedArchives(List<String> archiveIds) {
         return archiveRepository.findAllByIdInAndDeletedFalse(archiveIds);
+    }
+    private List<Archive> getAllArchives(List<String> archiveIds) {
+        return archiveRepository.findAllByIdIn(archiveIds);
     }
 
     public static  ApproximatedArchive approximate(Archive a) {
@@ -127,8 +130,9 @@ public class ArchiveService {
             );
             return approx;
     }
+    /* from string list to archive list, filtering unavailable and owned */
     public List<Archive> getAvailableArchives(List<String> archiveIds, String username) throws Exception {
-        List<Archive> archives = this.getArchives(archiveIds);
+        List<Archive> archives = this.getNonDeletedArchives(archiveIds);
         // filter owned archives. User can't buy archives already bought
         List<String> owned = this.findOwnedArchives(username)
                 .stream()

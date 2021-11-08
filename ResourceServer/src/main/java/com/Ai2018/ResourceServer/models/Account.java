@@ -39,7 +39,9 @@ public class Account implements UserDetails {
     }
 
     public Collection<? extends GrantedAuthority> grantAuthority(String authority) {
-        this.authorities.add(new SimpleGrantedAuthority(authority));
+        if(!this.authorities.contains(authority)) {
+            this.authorities.add(new SimpleGrantedAuthority(authority));
+        }
         return this.authorities;
     }
     public Collection<? extends GrantedAuthority> revokeAuthority(String authority) {
@@ -86,9 +88,8 @@ public class Account implements UserDetails {
         this.purchasedArchives.addAll(archiveIds);
     }
     public void removeArchive(String archiveId) {this.purchasedArchives.remove(archiveId);}
-    public void setWallet(double amount){
-        this.wallet=amount;
-    }
+    public void setWallet(double amount){this.wallet=amount;}
+    public void addWallet(double amount){this.wallet+=amount;}
     public double getWallet(){
         return this.wallet;
     }

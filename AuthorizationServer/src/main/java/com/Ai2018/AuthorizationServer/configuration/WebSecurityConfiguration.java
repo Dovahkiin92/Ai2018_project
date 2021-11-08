@@ -37,7 +37,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests().antMatchers("/register").hasAuthority("ROLE_REGISTER")
                 .and().authorizeRequests().antMatchers("/exit").hasAuthority("USER")
                 .and().authorizeRequests().anyRequest().authenticated()
-                .and().formLogin().permitAll().and().logout()
+                .and().formLogin().permitAll().and().logout().logoutSuccessUrl("http://localhost4200");
 
         ;
 

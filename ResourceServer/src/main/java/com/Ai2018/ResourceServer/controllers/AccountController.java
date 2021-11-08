@@ -38,6 +38,17 @@ public class AccountController {
             return new ResponseEntity<Object>(new Error(e.getMessage()),HttpStatus.BAD_REQUEST );
         }
     }
+    @PostMapping(path = "/topup", produces = "application/json")
+    public ResponseEntity<?> topUp(@RequestBody Double amount,@AuthenticationPrincipal String username) {
+        try {
+            Account acc = accountService.topUpTokens(username, amount);
+            return new ResponseEntity<Object>(acc, HttpStatus.OK);
+        }
+        catch(Exception e){
+            return new ResponseEntity<Object>(new Error("Account not found"), HttpStatus.NOT_FOUND);
+        }
+    }
+
 /*
     @PostMapping(path = "/api/register-admin", produces = "application/json")
     public ResponseEntity<?> registerAdmin(@RequestBody Account account) {

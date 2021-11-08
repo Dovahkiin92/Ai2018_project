@@ -15,9 +15,11 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     if (this.auth.isAuthenticated()) {
       this.auth.logout();//.subscribe(data => alert(data));
-      this.router.navigate(['/']);
+      //this.router.navigate(['/']);
     } else {
        this.auth.login();
+       this.router.navigate(['/']);
     }
   }
+
 }

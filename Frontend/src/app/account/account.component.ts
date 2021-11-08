@@ -4,6 +4,8 @@ import { Account } from '../_models/Account';
 import {MatSnackBar} from "@angular/material/snack-bar";
 import * as L from "leaflet";
 import {Position} from "../_models/Position";
+import {MatDialog} from "@angular/material/dialog";
+import {TopupDialogComponent} from "./topup-dialog/topup-dialog.component";
 
 @Component({
   selector: 'app-account',
@@ -25,7 +27,8 @@ export class AccountComponent implements OnInit {
 
   constructor(
     private accountService: AccountService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
   }
 
@@ -46,7 +49,21 @@ export class AccountComponent implements OnInit {
       }
     );
   }
-
+  onTopUp(): void {
+    const dialogRef = this.dialog.open(TopupDialogComponent);
+    dialogRef.afterClosed()
+      .subscribe(res => {
+        if (res && res >= 100 && res <= 1000) {
+          console.log('Topup confirm', res);
+          return this.accountService.topUp(res).subscribe((acc: Account) => {
+              console.log('Top up result', acc);
+              this.snackBar.open('Top Up successful!', 'Close', {duration: 1000});
+              this.account.wallet = acc.wallet;
+            },
+            err => this.snackBar.open('Operation failed!', 'Close', {duration: 1000}));
+        }
+      });
+  }
   onMapReady(map: L.Map): void {
     this.map = map;
     //   this.initMap();
@@ -70,4 +87,5 @@ export class AccountComponent implements OnInit {
       `<div><strong>Timestamp:</strong> ${ date }</div> `+
       `<div><strong>ArchiveId:</strong> ${ position.archiveId }</div> `;
   }
+
 }

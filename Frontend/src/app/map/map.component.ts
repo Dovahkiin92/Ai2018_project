@@ -7,6 +7,7 @@ import {LeafletDrawModule} from '@asymmetrik/ngx-leaflet-draw';
 import {Position} from '../_models/Position';
 import {ArchiveService} from "../_services/archive.service";
 import {MatListOption, MatSelectionList} from "@angular/material/list";
+import {PurchaseComponent} from "../purchase/purchase.component";
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -36,12 +37,13 @@ export class MapComponent implements OnInit, OnDestroy {
   disableFinishButton = true;
   disableAddButton = false;
   private selected = false;
-  protected selectedMarkers = [];
+  selectedMarkers = [];
   private selectedArchives = [];
   purchaseArea = L.layerGroup();
   users  = [];
   private selectedUsers = [];
   @ViewChild('userList') userList: MatSelectionList;
+
   /****** MAP VARS ******/
 
   map: L.Map;
@@ -110,6 +112,7 @@ export class MapComponent implements OnInit, OnDestroy {
       this.showControlLayer = false;
       this.drawOptionsDisabled.edit.featureGroup.addLayer(e.layer); // add remove button
       this.disableAddButton = true; // disable form input
+      document.getElementById("purchase").scrollIntoView({ behavior: "smooth", block: "start" });
     });
     this.map.on(L.Draw.Event.DELETED, ( () => { //remove polygon
       this.selectedMarkers = [];
@@ -170,6 +173,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   /* Get positions inside selected area */
   getArchivesInPolygon(l): void{
+    console.log('selectedm '+this.selectedMarkers);
     const poly = l.getLatLngs();
     this.polygon =l;
     this.archiveService.addSelectedArchives(null); // reset current archives in service
@@ -190,6 +194,7 @@ export class MapComponent implements OnInit, OnDestroy {
     if (this.selectedMarkers.length > 0 ){
         this.selected = true; // archives can be purchased
     }
+    console.log('selectedm2 '+this.selectedMarkers);
     this.positionService.addSelectedMarker(this.selectedMarkers);
     this.archiveService.addSelectedArchives(this.selectedArchives);
   }
@@ -199,6 +204,7 @@ export class MapComponent implements OnInit, OnDestroy {
       if (l instanceof L.CircleMarker && l.getPopup() != null) {
         this.map.removeLayer(l);
       }});
+    this.archiveLayers = [];
   }
   /*RESET BUTTON FORM SELECTION*/
   removeAreaSelection(): void{

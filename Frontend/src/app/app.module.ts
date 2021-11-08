@@ -47,6 +47,8 @@ import { NgApexchartsModule } from "ng-apexcharts";
 import { RegisterComponent } from './register/register.component';
 import {MatGridListModule} from "@angular/material/grid-list";
 import {MatSortModule} from "@angular/material/sort";
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { TopupDialogComponent } from './account/topup-dialog/topup-dialog.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +68,8 @@ import {MatSortModule} from "@angular/material/sort";
     ArchiveDetailsDialogComponent,
     ArchivesComponent,
     TimechartComponent,
-    RegisterComponent
+    RegisterComponent,
+    TopupDialogComponent
   ],
     imports: [
         BrowserModule,
@@ -95,7 +98,8 @@ import {MatSortModule} from "@angular/material/sort";
         MatOptionModule,
         NgApexchartsModule,
         MatGridListModule,
-        MatSortModule
+        MatSortModule,
+        FlexLayoutModule
     ],
   providers: [PositionService, AccountService, AuthenticationService, StoreService, ArchiveService, AuthGuard,
     {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true}],

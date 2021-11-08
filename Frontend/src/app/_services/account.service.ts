@@ -18,4 +18,7 @@ export class AccountService {
     account.password = password;
     this.auth.register(account);
   }
+  topUp(val){
+      return this.http.post(environment.TOPUP_URL,val);
+  }
 }
