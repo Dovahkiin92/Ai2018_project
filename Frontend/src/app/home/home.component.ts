@@ -17,7 +17,9 @@ export class HomeComponent implements OnInit {
   ) {
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.isLoggedIn = this.auth.isAuthenticated();
+  }
   onClick(){
     if( this.auth.isAuthenticated()){
       this.router.navigate(['/purchase']);
