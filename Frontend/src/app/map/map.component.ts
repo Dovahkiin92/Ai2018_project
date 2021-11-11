@@ -6,8 +6,7 @@ import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 import {LeafletDrawModule} from '@asymmetrik/ngx-leaflet-draw';
 import {Position} from '../_models/Position';
 import {ArchiveService} from "../_services/archive.service";
-import {MatListOption, MatSelectionList} from "@angular/material/list";
-import {PurchaseComponent} from "../purchase/purchase.component";
+import { MatSelectionList} from "@angular/material/list";
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -94,6 +93,7 @@ export class MapComponent implements OnInit, OnDestroy {
   /************************/
   constructor(private positionService: PositionService, private archiveService: ArchiveService) {}
   ngOnInit(): void {
+    // get current map position
     this.subscription = this.positionService.currentSubject.subscribe(val => this.addMarkers(val));
   }
     onMapReady(map: L.Map): void {
@@ -206,6 +206,7 @@ export class MapComponent implements OnInit, OnDestroy {
       }});
     this.archiveLayers = [];
   }
+  /*** MANUAL FORM ***/
   /*RESET BUTTON FORM SELECTION*/
   removeAreaSelection(): void{
     this.map.eachLayer(l => {
@@ -240,6 +241,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.getArchivesInPolygon(poly);
     this.disableFinishButton = true;
   }
+///////////////////
 
   isMarkerInsidePolygon(marker, polyPoints): boolean {
     const x = marker.getLatLng().lat;

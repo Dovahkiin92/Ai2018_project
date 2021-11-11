@@ -29,5 +29,10 @@
       "name": "security.oauth2.client.secret_key",
       "type": "java.lang.String",
       "description": "Symmetric key for encryption."
+    },
+    {
+      "name": "security.oauth2.client.redirect",
+      "type": "java.lang.String",
+      "description": "Redirection address."
     }
   ] }

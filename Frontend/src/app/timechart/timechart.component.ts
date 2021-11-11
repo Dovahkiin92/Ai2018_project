@@ -92,6 +92,7 @@ export class TimechartComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // get positions from service via subject
   this.subscription = this.positionService.currentTimeSubject.subscribe(positions => this.addValues(positions));
 }
   public addValues(positions):void {
@@ -102,7 +103,6 @@ export class TimechartComponent implements OnInit {
       this.total = this.total + 1;
       const ts = p.timestamp;
       const uid:string = p.userId;
-      console.log("got time" + new Date(ts*1000) +" from uid_ "+uid);
       if(! this.times[uid]){
         this.times[uid] = [];
       }
@@ -113,13 +113,13 @@ export class TimechartComponent implements OnInit {
       this.chartOptions.series.push({name: uid, data: this.times[uid] });
     });
     this.chartOptions.tooltip.enabled = false;
-    console.log(this.chartOptions);
   }
   public resetValues(): void{
     Object.keys(this.times).forEach(uid => {
     this.times[uid] = [];
     });
   }
+  // request positions within time range
   onTimeChange():void{
     let start = 0;
     let end = 0;

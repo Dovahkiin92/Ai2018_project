@@ -3,7 +3,7 @@
     <div class="flex-item" fxLayoutAlign="left" >
       <mat-card>
         <mat-card-title>My Profile</mat-card-title>
-        <mat-card-content>
+        <mat-card-content *ngIf="isAccount">
           <mat-list>
             <mat-list-item>
               <strong>Name: </strong>
@@ -21,7 +21,7 @@
            leaflet [leafletOptions]="mapOptions" (leafletMapReady)="onMapReady($event)">
     </div>
   </div>
-  <div class = "flex-item" style="width: 100%;" *ngIf="account">
+  <div class = "flex-item" style="width: 100%;" *ngIf="isAccount">
   <app-archives   [accountId]="account.id" (posEmitter)="showPositions($event)" ></app-archives>
   </div>
   </div>

@@ -1,18 +1,17 @@
-<h1 mat-dialog-title>Ricarica Token</h1>
+<h1 mat-dialog-title>Add Tokens</h1>
 <div mat-dialog-content>
   <mat-form-field class="align-self-center">
     <input matInput
            type="number"
-           placeholder="Importo"
+           placeholder="Amount"
            min="10"
            max="1000"
            [(ngModel)]="amount"
     >
   </mat-form-field>&emsp;
-  <p>Costo totale: {{amount }} &euro;</p>
-  <p>Confermi la ricarica? Sarai reindirizzato al portale per il pagamento.</p>
+  <p>Total: {{amount }} &euro;</p>
 </div>
 <div mat-dialog-actions>
-  <button mat-button [mat-dialog-close]="0">No</button>
-  <button mat-button [mat-dialog-close]="amount" >Conferma</button>
+  <button mat-button [mat-dialog-close]="0">Back</button>
+  <button mat-button [mat-dialog-close]="amount" >Proceed</button>
 </div>

@@ -1,6 +1,7 @@
 
 import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from './_services/authentication.service';
+import {environment} from "../environments/environment";
 
 
 
@@ -10,7 +11,7 @@ import {AuthenticationService} from './_services/authentication.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{
-  title = 'Lab';
+  title = 'Data Marketplace';
   logged = false;
   render = true;
   constructor( private auth: AuthenticationService) { }
@@ -23,7 +24,7 @@ export class AppComponent implements OnInit{
         data => {
           this.auth.setSession(data);
           this.logged = true;
-          window.opener.location.href = 'http://localhost:4200';
+          window.opener.location.href = environment.REDIRECT;
           window.close();
           this.render = true;
         }

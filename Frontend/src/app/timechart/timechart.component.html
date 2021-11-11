@@ -15,7 +15,7 @@
     <input matInput type="time" placeholder="Start time" formControlName="start" [(ngModel)]="startTime" (change)="onTimeChange()" #start/>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 38%; margin-bottom: 0;">
-  <input matInput type="time" placeholder="End time" formControlName="end" [(ngModel)]="endTime" #end/>
+  <input matInput type="time" placeholder="End time" formControlName="end"  [(ngModel)]="endTime" (change)="onTimeChange()" #end/>
 </mat-form-field>
 </form>
 <div id="chart">

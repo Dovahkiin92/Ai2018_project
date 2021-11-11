@@ -1,8 +1,0 @@
-{
-    "id" : 123,
-    "username": "FAKEUSER",
-    "password": "pass",
-    "wallet": 0,
-    "roles": ["dumb","ass"]
-}
-

@@ -4,13 +4,13 @@ import com.Ai2018.ResourceServer.models.Account;
 import com.Ai2018.ResourceServer.models.requestModels.AccountRegistration;
 import com.Ai2018.ResourceServer.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.security.auth.login.AccountException;
 import java.util.List;
 
 @Service
@@ -95,4 +95,24 @@ public class AccountService implements UserDetailsService {
         }
     }
 
+    public boolean existsAccountByRole(String role) {
+        List<Account> al = this.accountRepository.findAllByAuthoritiesContains(new SimpleGrantedAuthority("ROLE_"+role.toUpperCase()));
+        return !al.isEmpty();
+    }
+    public Account registerAdmin( AccountRegistration ar) throws Exception{
+        Account existingAccount = accountRepository.findAccountByUsername(ar.getUsername());
+        if (existingAccount == null) {
+            Account account = new Account();
+            account.setUsername(ar.getUsername());
+            account.setPassword(passwordEncoder.encode(ar.getPassword()));
+            account.setWallet(10.0);
+            account.grantAuthority("ROLE_USER");
+            account.grantAuthority("ROLE_ADMIN");
+            account.grantAuthority("ROLE_CUSTOMER");
+            return accountRepository.save(account);
+        } else {
+            throw new Exception("Username already taken");
+        }
+
+    }
 }

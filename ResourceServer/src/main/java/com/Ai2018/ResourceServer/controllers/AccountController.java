@@ -49,21 +49,4 @@ public class AccountController {
         }
     }
 
-/*
-    @PostMapping(path = "/api/register-admin", produces = "application/json")
-    public ResponseEntity<?> registerAdmin(@RequestBody Account account) {
-        try {
-            if(accountService.existsAccountByRole("ADMIN")){
-                return new ResponseEntity<Object>(new RestErrorResponse("AN_ADMIN_ALREADY_EXISTS"),HttpStatus.BAD_REQUEST );
-            }
-            account.grantAuthority("ROLE_ADMIN");
-            account.grantAuthority("ROLE_USER");
-            account.grantAuthority("ROLE_CUSTOMER");
-            return new ResponseEntity<Object>(accountService.register(account), HttpStatus.OK);
-        } catch (AccountException e) {
-            e.printStackTrace();
-            return new ResponseEntity<Object>(new RestErrorResponse(e.getMessage()),HttpStatus.BAD_REQUEST );
-        }
-    }*/
-
 }

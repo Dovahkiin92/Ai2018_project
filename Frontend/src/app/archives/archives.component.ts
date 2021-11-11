@@ -3,7 +3,7 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
+  OnChanges, OnDestroy,
   OnInit,
   Output,
   ViewChild,
@@ -28,11 +28,10 @@ import {Archive} from "../_models/Archive";
   styleUrls: ['./archives.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class ArchivesComponent implements OnInit, OnChanges, AfterViewInit {
+export class ArchivesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   @Input() accountId !: string;
-  @Output() posEmitter: EventEmitter<Position[]> = new EventEmitter<Position[]>();
+  @Output() posEmitter: EventEmitter<Position[]> = new EventEmitter<Position[]>(); // pos for map
   archives = [];
-  // displayedColumns: string[] = ['lat', 'lng', 'createdAt', 'actions'];
   displayedColumns: string[] = ['id', 'userId','purchases', 'Actions'];
   dataSource = new MatTableDataSource();
   loading = false; // Flag variable
@@ -144,7 +143,6 @@ export class ArchivesComponent implements OnInit, OnChanges, AfterViewInit {
   }
   validateFile(file): boolean {
     const ext =file.name.substring(file.name.lastIndexOf('.') + 1);
-    console.log(file.type);
     return file.type ==="application/json" && ext.toLowerCase() === 'json';
   }
   removeFile(file): void {
@@ -154,5 +152,8 @@ export class ArchivesComponent implements OnInit, OnChanges, AfterViewInit {
     if ( this.myFiles.length === 0){
       this.enableUpload = false;
     }
+  }
+  ngOnDestroy() {
+    this.snackBar.dismiss();
   }
 }

@@ -7,7 +7,7 @@ const RESOURCE_SERVER_PORT = '8081';
 const AUTHORIZATION_SERVER_HOST = '192.168.99.111';
 const AUTHORIZATION_SERVER_PORT = '9000';
 const CLIENT_ID = 'clientId'
-const redirect = 'localhost:4200'
+const REDIRECT = 'http://localhost:4200'
 export const environment = {
   production: false,
   client_credentials: 'trusted-app:secret',
@@ -16,7 +16,7 @@ export const environment = {
   refresh_url: 'http://register-app:secret@localhost:8080/oauth/token',
   authorization_code_url : 'http://'+AUTHORIZATION_SERVER_HOST +':' + AUTHORIZATION_SERVER_PORT +'/oauth/authorize',
   access_token_url : 'http://'+AUTHORIZATION_SERVER_HOST +':' + AUTHORIZATION_SERVER_PORT +'/oauth/token',
-  logout_url : 'http://'+AUTHORIZATION_SERVER_HOST +':' + AUTHORIZATION_SERVER_PORT +'/exit?returnTo=http%3a%2f%2f'+redirect+'%2f',
+  logout_url : 'http://'+AUTHORIZATION_SERVER_HOST +':' + AUTHORIZATION_SERVER_PORT +'/exit?returnTo='+REDIRECT+'%2f',
   GET_ACCOUNT_URL: 'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/account',
   map_position_url: 'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/positions/within',
   map_archives_url: 'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/archives/within',
@@ -46,7 +46,8 @@ export const environment = {
  //
   // store_invoice_detail_url: 'http://localhost:8080/store/invoices/{id}',
   store_invoice_pay_url:  'http://' + RESOURCE_SERVER_HOST + ':' + RESOURCE_SERVER_PORT + '/store/invoices/{id}/pay',
-  CLIENT_ID
+  CLIENT_ID,
+  REDIRECT
   // store_invoice_cancel_url: 'http://localhost:8080/store/invoices/{id}'
 
 };

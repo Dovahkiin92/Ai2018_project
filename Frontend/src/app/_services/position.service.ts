@@ -6,6 +6,7 @@ import {Position} from '../_models/Position';
 import {Invoice} from '../_models/Invoice';
 import { Timeposition } from '../_models/Timeposition';
 import {AuthenticationService} from "./authentication.service";
+import {timestamp} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -82,13 +83,14 @@ export class PositionService {
           pos.userId = archive.userId;
           pos.archiveId = archive.id;
           this.currentMarkers.push(pos);
-          console.log('added a marker', pos.latitude, pos.longitude);
       });
-        archive.approxTimestamps.forEach( el =>{
-          let pos = new Timeposition();
-          pos.timestamp = el.timestamp;
-          pos.userId = el.owner;
-          this.currentTimestamps.push(pos);
+        archive.approxTimestamps.forEach( el => {
+          if (el.timestamp > startTs && el.timestamp < endTs) {
+            let pos = new Timeposition();
+            pos.timestamp = el.timestamp;
+            pos.userId = el.owner;
+            this.currentTimestamps.push(pos);
+            }
         });
       });
       this.currentSubject.next(this.currentMarkers);

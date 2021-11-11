@@ -9,25 +9,26 @@ export class TokenInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // add authorization header with jwt token if available
      const curToken = this.auth.getToken();
-     if (curToken) {
-        // console.log('Appending authenticated user\'s token!');
+     if ( curToken ) {
+       if(this.auth.checkExpireTime()){
+         this.auth.refresh();
+       }
         request = request.clone({
           setHeaders: {
             Authorization: 'Bearer ' + curToken
           }
         });
-        console.log('ADDED' + curToken); /// DEBUG
-      }
-     console.log('sending request' + request);
-     const register = this.auth.getRegistrationToken();
-    if (register) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: 'Bearer ' + register
-        }
-      });
-      console.log('ADDED' + register); /// DEBUG
-    }
-     return next.handle(request);
+      } else {
+       // check if it is a registration request
+       const register = this.auth.getRegistrationToken();
+       if (register) {
+         request = request.clone({
+           setHeaders: {
+             Authorization: 'Bearer ' + register
+           }
+         });
+       }
+     }
+    return next.handle(request);
   }
 }

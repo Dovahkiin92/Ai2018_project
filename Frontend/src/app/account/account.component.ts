@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { AccountService } from '../_services/account.service';
 import { Account } from '../_models/Account';
 import {MatSnackBar} from "@angular/material/snack-bar";
@@ -12,8 +12,9 @@ import {TopupDialogComponent} from "./topup-dialog/topup-dialog.component";
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.css']
 })
-export class AccountComponent implements OnInit {
+export class AccountComponent implements OnInit, OnDestroy {
   account: Account;
+  isAccount = false;
   map: L.Map;
   mapOptions: any = {
     layers: [
@@ -39,6 +40,7 @@ export class AccountComponent implements OnInit {
         this.account.id = data.id;
         this.account.username = data.username;
         this.account.wallet = data.wallet;
+        this.isAccount = true;
       },
       error => {
         console.log(error);
@@ -54,9 +56,7 @@ export class AccountComponent implements OnInit {
     dialogRef.afterClosed()
       .subscribe(res => {
         if (res && res >= 100 && res <= 1000) {
-          console.log('Topup confirm', res);
           return this.accountService.topUp(res).subscribe((acc: Account) => {
-              console.log('Top up result', acc);
               this.snackBar.open('Top Up successful!', 'Close', {duration: 1000});
               this.account.wallet = acc.wallet;
             },
@@ -64,9 +64,9 @@ export class AccountComponent implements OnInit {
         }
       });
   }
+  /***** MAP SECTION ******/
   onMapReady(map: L.Map): void {
     this.map = map;
-    //   this.initMap();
   }
 
   showPositions(positions: Position[]) {
@@ -88,4 +88,7 @@ export class AccountComponent implements OnInit {
       `<div><strong>ArchiveId:</strong> ${ position.archiveId }</div> `;
   }
 
+  ngOnDestroy() {
+    this.snackBar.dismiss();
+  }
 }

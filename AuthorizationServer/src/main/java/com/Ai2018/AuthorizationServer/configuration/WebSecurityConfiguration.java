@@ -1,6 +1,7 @@
 package com.Ai2018.AuthorizationServer.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -20,6 +21,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private UserDetailsService userDetailsService;
+    @Value("${security.oauth2.client.redirect}")
+    String REDIRECT_URI;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -37,7 +40,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests().antMatchers("/register").hasAuthority("ROLE_REGISTER")
                 .and().authorizeRequests().antMatchers("/exit").hasAuthority("USER")
                 .and().authorizeRequests().anyRequest().authenticated()
-                .and().formLogin().permitAll().and().logout().logoutSuccessUrl("http://localhost4200");
+                .and().formLogin().permitAll().and().logout().logoutSuccessUrl(REDIRECT_URI);
 
         ;
 

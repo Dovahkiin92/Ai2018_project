@@ -35,7 +35,8 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     int REFRESH_TOKEN_VALIDITY_SECONDS;
     @Value("${security.oauth2.client.secret_key}")
     String SIGNING_KEY;
-
+    @Value("${security.oauth2.client.redirect}")
+    String REDIRECT_URI;
     @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
@@ -61,7 +62,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
               .inMemory()
                 .withClient(CLIENT_ID)
                 .secret(passwordEncoder.encode(CLIENT_SECRET))
-                .redirectUris("http://localhost:4200") //redirect on client to pass code
+                .redirectUris(REDIRECT_URI) //redirect on client to pass code
                 .authorizedGrantTypes("authorization_code", "refresh_token")
                 .scopes("all")
                 .accessTokenValiditySeconds(ACCESS_TOKEN_VALIDITY_SECONDS)
@@ -81,6 +82,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         endpoints
                 .authenticationManager(authenticationManager)
                 .tokenStore(tokenStore()).accessTokenConverter(accessTokenConverter())
+                .userDetailsService(userDetailsService)
 
   ;
     }

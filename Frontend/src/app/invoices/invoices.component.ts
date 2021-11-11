@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Location} from '@angular/common';
 import {MatDialog} from '@angular/material/dialog';
-import {MatSort, Sort} from '@angular/material/sort';
+import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import { PayDialogComponent } from './pay-dialog/pay-dialog.component';
@@ -23,7 +23,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit, OnDestroy {
   invoice: any;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  noInvoices: boolean;
+  noInvoices: boolean = false;
 
   constructor(
     private location: Location,
@@ -56,6 +56,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit, OnDestroy {
           },
           err => {
             console.log('error' + err);
+            this.noInvoices = true;
             this.snackBar.open('Server currently unavailable', 'Retry')
               .onAction().subscribe(() => window.location.reload());
           });

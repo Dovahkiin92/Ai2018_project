@@ -45,14 +45,15 @@ public class PositionService {
         long lastTs = positions.get(positions.size()-1).getTimestamp();
         for(Position p: positions.subList(1,positions.size())){
             System.out.println("Checking constraints between:"+previous+" "+p);
-            if(!p.isValidTimestamp())  throw new Exception("Invalid Timestamp");
-            if(!p.isGreaterTimestamp(previous)) throw new Exception("Invalid Sequence");
-         if(p.getSpeed(previous)>=MAXIMUM_SPEED) throw new Exception("Invalid Sequence");
             System.out.println("Speed: "+p.getSpeed(previous));
+            if(!p.isValidTimestamp())  throw new Exception("Invalid Timestamp");
+            if(!p.isGreaterTimestamp(previous)) throw new Exception("Invalid Sequence! Position not in time sequence");
+         if(p.getSpeed(previous)>=MAXIMUM_SPEED) throw new Exception("Invalid Sequence! Speed limit exceeded.");
+            previous =p;
         }
         long days = TimeUnit.DAYS.convert(lastTs-firstTs, TimeUnit.SECONDS);
 
-        if(days > timeInterval) throw new Exception("Invalid Sequence");
+        if(days > timeInterval) throw new Exception("Invalid Sequence! Time interval ecxeeded.");
     }
 
 
